@@ -10,16 +10,3 @@
     "restartPolicyMaxRetries": 10
   }
 }
-```
-
-**Your folder structure should look like:**
-```
-webstore/
-├── railway.json          ← Create this here
-├── backend/
-│   ├── server.js
-│   ├── package.json
-│   └── ...
-└── frontend/
-    ├── index.html
-    └── ...
