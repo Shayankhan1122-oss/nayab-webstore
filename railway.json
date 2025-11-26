@@ -1,7 +1,8 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "nixpacksPlan": {
-    "providers": ["node"]
+    "providers": ["node"],
+    "node": "18"
   },
   "build": {
     "builder": "NIXPACKS",
