@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout -NAYAB WEBSTORE</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .checkout-header {
+            grid-column: span 2;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-header {
+                grid-column: span 1;
+            }
+        }
+        
+        .billing-details {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .order-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            margin-top: 1rem;
+        }
+        
+        .place-order-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+        }
+        
+        .place-order-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .back-to-cart {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-to-cart:hover {
+            text-decoration: underline;
+        }
+        
+        .notification {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">WebStore</a>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="cart.html" class="nav-link cart-icon">
+                        <span>Cart</span>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </a>
+                    <a href="admin-login.html" class="nav-link">Admin</a>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1>Checkout</h1>
+                <a href="cart.html" class="back-to-cart">&larr; Back to Cart</a>
+            </div>
+
+            <div class="billing-details">
+                <h2>Delivery Information</h2>
+                
+                <div id="notification" class="notification"></div>
+                
+                <form id="checkout-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-name">Full Name</label>
+                            <input type="text" id="customer-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-email">Email</label>
+                            <input type="email" id="customer-email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-phone">Phone Number</label>
+                        <input type="tel" id="customer-phone" placeholder="+92 3XX XXXXXXX" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="shipping-address">Shipping Address</label>
+                        <input type="text" id="shipping-address" placeholder="Street address" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">Province</label>
+                            <input type="text" id="state" placeholder="e.g., Punjab, Sindh" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zip">Postal Code</label>
+                            <input type="text" id="zip" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input type="text" id="country" value="Pakistan" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="place-order-btn">Place Order</button>
+                </form>
+            </div>
+            
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <div id="order-items">
+                    <!-- Items will be loaded here -->
+                </div>
+                
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">Rs 0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping:</span>
+                    <span id="shipping">Rs 0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax:</span>
+                    <span id="tax">Rs 0.00</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total:</span>
+                    <span id="total">Rs 0.00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025NAYAB WEBSTORE. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCartAndSummary();
+            
+            const checkoutForm = document.getElementById('checkout-form');
+            checkoutForm.addEventListener('submit', placeOrder);
+        });
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function loadCartAndSummary() {
+            if (cart.length === 0) {
+                window.location.href = 'cart.html';
+                return;
+            }
+            
+            const orderItemsContainer = document.getElementById('order-items');
+            orderItemsContainer.innerHTML = '';
+            
+            // Add each item to the order summary
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'summary-item';
+                itemElement.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>Rs ${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                orderItemsContainer.appendChild(itemElement);
+            });
+            
+            updateOrderSummary();
+        }
+
+        function updateOrderSummary() {
+            // Calculate totals
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const shipping = subtotal > 0 ? 250 : 0; // Rs 250 shipping if cart not empty
+            const tax = subtotal * 0.08; // 8% tax
+            const total = subtotal + shipping + tax;
+            
+            // Update the DOM
+            document.getElementById('subtotal').textContent = `Rs ${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = `Rs ${shipping.toFixed(2)}`;
+            document.getElementById('tax').textContent = `Rs ${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `Rs ${total.toFixed(2)}`;
+        }
+
+        function placeOrder(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const customerName = document.getElementById('customer-name').value;
+            const customerEmail = document.getElementById('customer-email').value;
+            const customerPhone = document.getElementById('customer-phone').value;
+            const shippingAddress = document.getElementById('shipping-address').value 
+                + ', ' + document.getElementById('city').value 
+                + ', ' + document.getElementById('state').value 
+                + ' ' + document.getElementById('zip').value 
+                + ', ' + document.getElementById('country').value;
+            
+            // Prepare order data
+            const orderData = {
+                customer_name: customerName,
+                customer_email: customerEmail,
+                customer_phone: customerPhone,
+                shipping_address: shippingAddress,
+                order_items: cart,
+                total_amount: parseFloat(document.getElementById('total').textContent.replace('Rs ', ''))
+            };
+            
+            // Auto-detect API URL for mobile/desktop access
+            const apiBaseUrl = window.location.hostname === 'localhost' 
+                ? 'http://localhost:5000' 
+                : `http://${window.location.hostname}:5000`;
+            
+            // Send order to backend
+            fetch(`${apiBaseUrl}/api/orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Clear cart after successful order
+                localStorage.removeItem('cart');
+                
+                // Show success message and redirect
+                showNotification('Order placed successfully! Redirecting to home...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 2000);
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

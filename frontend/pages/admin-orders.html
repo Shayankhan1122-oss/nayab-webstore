@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - LuxeBoutique</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            background-color: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: #3a5be0;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background-color: #ffeaa7;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .status-processing {
+            background-color: #fdcb6e;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .status-shipped {
+            background-color: #74b9ff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: white;
+        }
+        
+        .status-delivered {
+            background-color: #00b894;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: white;
+        }
+        
+        .status-cancelled {
+            background-color: #d63031;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .notification {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .admin-logout {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .admin-logout:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">WebStore</a>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="../pages/cart.html" class="nav-link cart-icon">
+                        <span>Cart</span>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </a>
+                    <a href="admin.html" class="nav-link">Manage Products</a>
+                    <a href="#" class="nav-link admin-logout" id="logout-btn">Logout</a>
+                </div>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1>Order Management</h1>
+            </div>
+
+            <div class="admin-panel">
+                <div id="notification" class="notification"></div>
+
+                <h2>Recent Orders</h2>
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 LuxeBoutique. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            let token = localStorage.getItem('admin_token');
+
+            // If no token but device is remembered, try to get a new token with special code
+            if (!token && localStorage.getItem('rememberDevice') === 'true') {
+                // Automatically log in with special code
+                fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username: '1234Shayan', password: '1234Shayan' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        // Store the token
+                        localStorage.setItem('admin_token', data.token);
+                        token = data.token;
+
+                        // Load orders after successful auto-login
+                        loadOrders();
+                    } else {
+                        window.location.href = 'admin-login.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Auto-login failed:', error);
+                    window.location.href = 'admin-login.html';
+                });
+            } else if (!token) {
+                window.location.href = 'admin-login.html';
+                return;
+            }
+
+            // Load orders
+            loadOrders();
+
+            // Logout button
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('rememberDevice');
+                localStorage.removeItem('deviceAuthorized');
+                window.location.href = 'admin-login.html';
+            });
+        });
+
+        // Load all orders
+        function loadOrders() {
+            const token = localStorage.getItem('admin_token');
+            
+            fetch('/api/orders', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const ordersList = document.getElementById('orders-list');
+                ordersList.innerHTML = '';
+
+                data.orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    
+                    // Format date
+                    const date = new Date(order.created_at);
+                    const formattedDate = date.toLocaleDateString();
+                    
+                    // Create status span with appropriate class
+                    let statusClass = '';
+                    switch(order.status) {
+                        case 'pending':
+                            statusClass = 'status-pending';
+                            break;
+                        case 'processing':
+                            statusClass = 'status-processing';
+                            break;
+                        case 'shipped':
+                            statusClass = 'status-shipped';
+                            break;
+                        case 'delivered':
+                            statusClass = 'status-delivered';
+                            break;
+                        case 'cancelled':
+                            statusClass = 'status-cancelled';
+                            break;
+                        default:
+                            statusClass = 'status-pending';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${order.id}</td>
+                        <td>${order.customer_name}</td>
+                        <td>$${order.total_amount.toFixed(2)}</td>
+                        <td><span class="${statusClass}">${order.status}</span></td>
+                        <td>${formattedDate}</td>
+                        <td class="action-buttons">
+                            <button class="btn" onclick="viewOrderDetails(${order.id})">View Details</button>
+                            <select class="btn" onchange="updateOrderStatus(${order.id}, this.value)" style="background-color: #4a6cf7;">
+                                <option value="">Change Status</option>
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
+                                <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                            <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
+                        </td>
+                    `;
+                    
+                    ordersList.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading orders:', error);
+                showNotification('Error loading orders', 'error');
+            });
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const token = localStorage.getItem('admin_token');
+            
+            fetch(`/api/orders/${orderId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const order = data.order;
+                
+                // Create modal or show details in an alert
+                let orderItemsHtml = '';
+                order.order_items.forEach(item => {
+                    orderItemsHtml += `
+                        <div class="order-details">
+                            <strong>${item.name}</strong> - Quantity: ${item.quantity} - $${(item.price * item.quantity).toFixed(2)}
+                        </div>
+                    `;
+                });
+                
+                const details = `
+                    <div class="order-details">
+                        <h3>Order #${order.id}</h3>
+                        <p><strong>Customer:</strong> ${order.customer_name}</p>
+                        <p><strong>Email:</strong> ${order.customer_email}</p>
+                        <p><strong>Phone:</strong> ${order.customer_phone}</p>
+                        <p><strong>Shipping Address:</strong> ${order.shipping_address}</p>
+                        <p><strong>Total:</strong> $${order.total_amount.toFixed(2)}</p>
+                        <p><strong>Status:</strong> <span class="${getStatusClass(order.status)}">${order.status}</span></p>
+                        <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+                        <h4>Items:</h4>
+                        ${orderItemsHtml}
+                    </div>
+                `;
+                
+                // Show in a modal or alert
+                const modal = document.createElement('div');
+                modal.innerHTML = `
+                    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; justify-content: center; align-items: center;">
+                        <div style="background: white; padding: 2rem; border-radius: 8px; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                            ${details}
+                            <button class="btn" onclick="this.parentElement.parentElement.parentElement.remove()" style="margin-top: 1rem;">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            })
+            .catch(error => {
+                console.error('Error loading order details:', error);
+                showNotification('Error loading order details', 'error');
+            });
+        }
+
+        // Update order status
+        function updateOrderStatus(orderId, newStatus) {
+            if (!newStatus) return; // If no status selected, do nothing
+            
+            const token = localStorage.getItem('admin_token');
+            
+            fetch(`/api/orders/${orderId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                showNotification('Order status updated successfully', 'success');
+                loadOrders(); // Reload the order list
+            })
+            .catch(error => {
+                console.error('Error updating order status:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        // Delete order
+        function deleteOrder(id) {
+            if (!confirm('Are you sure you want to delete this order? This cannot be undone.')) {
+                return;
+            }
+
+            const token = localStorage.getItem('admin_token');
+            
+            fetch(`/api/orders/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                showNotification('Order deleted successfully', 'success');
+                loadOrders(); // Reload the order list
+            })
+            .catch(error => {
+                console.error('Error deleting order:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        // Get CSS class for status
+        function getStatusClass(status) {
+            switch(status) {
+                case 'pending':
+                    return 'status-pending';
+                case 'processing':
+                    return 'status-processing';
+                case 'shipped':
+                    return 'status-shipped';
+                case 'delivered':
+                    return 'status-delivered';
+                case 'cancelled':
+                    return 'status-cancelled';
+                default:
+                    return 'status-pending';
+            }
+        }
+
+        // Function to show notifications
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.className = 'notification';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

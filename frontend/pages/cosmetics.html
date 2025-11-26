@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmetics -NAYAB WEBSTORE</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .empty-products {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+        .empty-products h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <a href="../index.html">WebStore</a>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="../pages/cart.html" class="nav-link cart-icon">
+                        <span>Cart</span>
+                        <span class="cart-count" id="cart-count">0</span>
+                    </a>
+                    <a href="admin-login.html" class="nav-link">Admin Login</a>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="category-header">
+            <h1>Cosmetics</h1>
+            <p>Explore our premium cosmetics collection</p>
+        </section>
+
+        <section class="products">
+            <div class="products-container" id="products-container">
+                <!-- Products will be loaded dynamically from the database -->
+            </div>
+            
+            <div class="empty-products" id="empty-message">
+                <h3>No products available yet</h3>
+                <p>Please check back soon or contact us for more information.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025NAYAB WEBSTORE. All rights reserved.</p>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Load products from database
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryName = 'cosmetics';
+            loadCategoryProducts(categoryName);
+        });
+
+        async function loadCategoryProducts(category) {
+            const apiBaseUrl = window.location.hostname === 'localhost' 
+                ? 'http://localhost:5000' 
+                : `http://${window.location.hostname}:5000`;
+            
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/products?category=${category}`);
+                const data = await response.json();
+                
+                const container = document.getElementById('products-container');
+                const emptyMessage = document.getElementById('empty-message');
+                
+                if (data.products && data.products.length > 0) {
+                    emptyMessage.style.display = 'none';
+                    container.innerHTML = '';
+                    
+                    data.products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'product-card';
+                        productCard.innerHTML = `
+                            <img src="${product.image || '../images/placeholder-product.jpg'}" alt="${product.name}">
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p class="price">Rs ${parseFloat(product.price).toLocaleString('en-PK')}</p>
+                                <button class="add-to-cart-btn" 
+                                    data-product-id="${product.id}" 
+                                    data-product-name="${product.name}" 
+                                    data-product-price="${product.price}">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(productCard);
+                    });
+                    
+                    // Reinitialize add to cart buttons
+                    initializeAddToCart();
+                } else {
+                    emptyMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('empty-message').style.display = 'block';
+            }
+        }
+
+        function initializeAddToCart() {
+            const buttons = document.querySelectorAll('.add-to-cart-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-product-id');
+                    const productName = this.getAttribute('data-product-name');
+                    const productPrice = parseFloat(this.getAttribute('data-product-price'));
+                    
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const existingItem = cart.find(item => item.id === productId);
+                    
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                    } else {
+                        cart.push({
+                            id: productId,
+                            name: productName,
+                            price: productPrice,
+                            quantity: 1
+                        });
+                    }
+                    
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    
+                    // Update cart count
+                    const cartCount = document.getElementById('cart-count');
+                    if (cartCount) {
+                        const count = cart.reduce((total, item) => total + item.quantity, 0);
+                        cartCount.textContent = count;
+                    }
+                    
+                    // Show message
+                    alert(`${productName} added to cart!`);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
