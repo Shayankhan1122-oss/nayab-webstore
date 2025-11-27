@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_18", "python3", "gcc", "gnumake"]
 
 [phases.install]
-cmds = ["cd backend && npm ci --omit=dev && npm rebuild sqlite3"]
+cmds = ["cd backend && npm install"]
 
 [start]
 cmd = "cd backend && node server.js"
