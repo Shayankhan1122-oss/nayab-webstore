@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - LuxeBoutique</title>
+    <title>Admin Dashboard - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .admin-container {
@@ -133,6 +133,38 @@
         .admin-logout:hover {
             background-color: #c0392b;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +172,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <a href="../index.html">WebStore</a>
+                    <a href="../index.html">NAYAB WEBSTORE</a>
                 </div>
                 <div class="nav-menu" id="nav-menu">
                     <a href="../index.html" class="nav-link">Home</a>
@@ -151,7 +183,6 @@
                     </a>
                     <a href="../pages/admin-orders.html" class="nav-link">Manage Orders</a>
                     <a href="#" class="nav-link admin-logout" id="logout-btn">Logout</a>
-                </div>
                 </div>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -180,17 +211,17 @@
                         <textarea id="description" rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="price">Price ($)</label>
+                        <label for="price">Price (PKR)</label>
                         <input type="number" id="price" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="category">Category</label>
                         <select id="category" required>
                             <option value="">Select a category</option>
-                            <option value="Jewellery">Jewellery</option>
-                            <option value="Cosmetics">Cosmetics</option>
-                            <option value="Skincare">Skincare</option>
-                            <option value="Clothes">Clothes</option>
+                            <option value="jewellery">Jewellery</option>
+                            <option value="cosmetics">Cosmetics</option>
+                            <option value="skincare">Skincare</option>
+                            <option value="clothes">Clothes</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -226,59 +257,81 @@
         </div>
     </main>
 
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-name">Product Name</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-description">Description</label>
+                    <textarea id="edit-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-price">Price (PKR)</label>
+                    <input type="number" id="edit-price" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-category">Category</label>
+                    <select id="edit-category" required>
+                        <option value="jewellery">Jewellery</option>
+                        <option value="cosmetics">Cosmetics</option>
+                        <option value="skincare">Skincare</option>
+                        <option value="clothes">Clothes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-image_url">Image URL</label>
+                    <input type="text" id="edit-image_url">
+                </div>
+                <div class="form-group">
+                    <label for="edit-stock_quantity">Stock Quantity</label>
+                    <input type="number" id="edit-stock_quantity" min="0">
+                </div>
+                <button type="submit" class="btn btn-success">Update Product</button>
+                <button type="button" class="btn btn-danger" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <footer>
-        <p>&copy; 2025 LuxeBoutique. All rights reserved.</p>
+        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
     </footer>
 
     <script src="../js/main.js"></script>
     <script>
+        // Auto-detect API URL
+        const apiBaseUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000' 
+            : window.location.origin;
+
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is logged in
             let token = localStorage.getItem('admin_token');
 
-            // If no token but device is remembered, try to get a new token with special code
-            if (!token && localStorage.getItem('rememberDevice') === 'true') {
-                // Automatically log in with special code
-                fetch('http://localhost:5000/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username: '1234Shayan', password: '1234Shayan' })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.token) {
-                        // Store the token
-                        localStorage.setItem('admin_token', data.token);
-                        token = data.token;
-
-                        // Load products after successful auto-login
-                        loadProducts();
-                    } else {
-                        window.location.href = 'admin-login.html';
-                    }
-                })
-                .catch(error => {
-                    console.error('Auto-login failed:', error);
-                    window.location.href = 'admin-login.html';
-                });
-            } else if (!token) {
+            if (!token) {
                 window.location.href = 'admin-login.html';
                 return;
             }
 
-            // Load products
             loadProducts();
 
-            // Add product form submission
             const productForm = document.getElementById('product-form');
             productForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 addProduct();
             });
 
-            // Logout button
+            const editForm = document.getElementById('edit-product-form');
+            editForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateProduct();
+            });
+
             document.getElementById('logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 localStorage.removeItem('admin_token');
@@ -286,13 +339,15 @@
                 localStorage.removeItem('deviceAuthorized');
                 window.location.href = 'admin-login.html';
             });
+
+            // Close modal when clicking X
+            document.querySelector('.close').addEventListener('click', closeEditModal);
         });
 
-        // Load all products
         function loadProducts() {
             const token = localStorage.getItem('admin_token');
             
-            fetch('http://localhost:5000/api/products', {
+            fetch(`${apiBaseUrl}/api/products`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -309,7 +364,7 @@
                         <td>${product.id}</td>
                         <td>${product.name}</td>
                         <td>${product.category}</td>
-                        <td>$${product.price.toFixed(2)}</td>
+                        <td>Rs ${parseFloat(product.price).toLocaleString('en-PK')}</td>
                         <td>${product.stock_quantity}</td>
                         <td class="action-buttons">
                             <button class="btn" onclick="editProduct(${product.id})">Edit</button>
@@ -326,27 +381,19 @@
             });
         }
 
-        // Add new product
         function addProduct() {
             const token = localStorage.getItem('admin_token');
             
-            const name = document.getElementById('name').value;
-            const description = document.getElementById('description').value;
-            const price = document.getElementById('price').value;
-            const category = document.getElementById('category').value;
-            const image_url = document.getElementById('image_url').value;
-            const stock_quantity = document.getElementById('stock_quantity').value;
-
             const productData = {
-                name,
-                description,
-                price: parseFloat(price),
-                category,
-                image_url,
-                stock_quantity: parseInt(stock_quantity)
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                price: parseFloat(document.getElementById('price').value),
+                category: document.getElementById('category').value,
+                image_url: document.getElementById('image_url').value,
+                stock_quantity: parseInt(document.getElementById('stock_quantity').value)
             };
 
-            fetch('http://localhost:5000/api/products', {
+            fetch(`${apiBaseUrl}/api/products`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -361,7 +408,7 @@
                 }
                 showNotification('Product added successfully', 'success');
                 document.getElementById('product-form').reset();
-                loadProducts(); // Reload the product list
+                loadProducts();
             })
             .catch(error => {
                 console.error('Error adding product:', error);
@@ -369,7 +416,74 @@
             });
         }
 
-        // Delete product
+        function editProduct(id) {
+            const token = localStorage.getItem('admin_token');
+            
+            fetch(`${apiBaseUrl}/api/products/${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const product = data.product;
+                
+                document.getElementById('edit-id').value = product.id;
+                document.getElementById('edit-name').value = product.name;
+                document.getElementById('edit-description').value = product.description || '';
+                document.getElementById('edit-price').value = product.price;
+                document.getElementById('edit-category').value = product.category;
+                document.getElementById('edit-image_url').value = product.image_url || '';
+                document.getElementById('edit-stock_quantity').value = product.stock_quantity;
+                
+                document.getElementById('editModal').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching product:', error);
+                showNotification('Error loading product details', 'error');
+            });
+        }
+
+        function updateProduct() {
+            const token = localStorage.getItem('admin_token');
+            const id = document.getElementById('edit-id').value;
+            
+            const productData = {
+                name: document.getElementById('edit-name').value,
+                description: document.getElementById('edit-description').value,
+                price: parseFloat(document.getElementById('edit-price').value),
+                category: document.getElementById('edit-category').value,
+                image_url: document.getElementById('edit-image_url').value,
+                stock_quantity: parseInt(document.getElementById('edit-stock_quantity').value)
+            };
+
+            fetch(`${apiBaseUrl}/api/products/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(productData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                showNotification('Product updated successfully', 'success');
+                closeEditModal();
+                loadProducts();
+            })
+            .catch(error => {
+                console.error('Error updating product:', error);
+                showNotification(`Error: ${error.message}`, 'error');
+            });
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
         function deleteProduct(id) {
             if (!confirm('Are you sure you want to delete this product?')) {
                 return;
@@ -377,7 +491,7 @@
 
             const token = localStorage.getItem('admin_token');
             
-            fetch(`http://localhost:5000/api/products/${id}`, {
+            fetch(`${apiBaseUrl}/api/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -389,7 +503,7 @@
                     throw new Error(data.error);
                 }
                 showNotification('Product deleted successfully', 'success');
-                loadProducts(); // Reload the product list
+                loadProducts();
             })
             .catch(error => {
                 console.error('Error deleting product:', error);
@@ -397,13 +511,11 @@
             });
         }
 
-        // Function to show notifications
         function showNotification(message, type) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
             notification.className = `notification ${type}`;
             
-            // Hide notification after 3 seconds
             setTimeout(() => {
                 notification.className = 'notification';
             }, 3000);
