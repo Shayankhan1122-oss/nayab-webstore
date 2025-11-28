@@ -1,5 +1,13 @@
 require('dotenv').config();
 
+// Force check JWT_SECRET
+console.log('🔑 JWT_SECRET is set:', !!process.env.JWT_SECRET);
+if (process.env.JWT_SECRET) {
+    console.log('✅ JWT_SECRET loaded successfully');
+} else {
+    console.log('⚠️  WARNING: JWT_SECRET not found! Using fallback key');
+}
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
