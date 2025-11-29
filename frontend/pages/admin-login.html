@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login -NAYAB WEBSTORE</title>
+    <title>Admin Login - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .login-container {
@@ -102,8 +102,10 @@
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
 
-                // Use localhost:5000 directly when testing locally
-                const apiBaseUrl = 'http://localhost:5000';
+                // Auto-detect API URL - works on both localhost and Railway
+                const apiBaseUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:5000' 
+                    : window.location.origin;
 
                 console.log('Attempting login to:', `${apiBaseUrl}/api/auth/login`);
                 console.log('Username:', username);
@@ -139,7 +141,7 @@
                     }
                 } catch (error) {
                     console.error('Fetch error:', error);
-                    showNotification('Cannot connect to server. Make sure the backend is running on port 5000.', 'error');
+                    showNotification('Cannot connect to server. Please check your connection.', 'error');
                 }
             });
         });
