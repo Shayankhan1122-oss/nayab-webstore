@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 const productRoutes = require('./routes/products');
 const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
+const uploadRoutes = require('./routes/uploads');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -28,10 +29,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the frontend directory
 app.use(express.static(path.join(__dirname, '../frontend')));
 
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/uploads', uploadRoutes);
 
 // Serve the frontend for all other routes
 app.get('*', (req, res) => {
