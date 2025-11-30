@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skincare -NAYAB WEBSTORE</title>
+    <title>Skincare - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
+        .category-header {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+        
         .empty-products {
             text-align: center;
             padding: 4rem 2rem;
             color: #666;
         }
-        .empty-products h3 {
-            margin-bottom: 1rem;
-            color: #333;
+        
+        .products {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -22,12 +31,12 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <a href="../index.html">WebStore</a>
+                    <a href="../index.html">NAYAB WEBSTORE</a>
                 </div>
                 <div class="nav-menu" id="nav-menu">
                     <a href="../index.html" class="nav-link">Home</a>
                     <a href="#" class="nav-link">About</a>
-                    <a href="../pages/cart.html" class="nav-link cart-icon">
+                    <a href="cart.html" class="nav-link cart-icon">
                         <span>Cart</span>
                         <span class="cart-count" id="cart-count">0</span>
                     </a>
@@ -50,10 +59,10 @@
 
         <section class="products">
             <div class="products-container" id="products-container">
-                <!-- Products will be loaded dynamically from the database -->
+                <!-- Products will be loaded here -->
             </div>
             
-            <div class="empty-products" id="empty-message">
+            <div class="empty-products" id="empty-message" style="display: none;">
                 <h3>No products available yet</h3>
                 <p>Please check back soon or contact us for more information.</p>
             </div>
@@ -61,38 +70,49 @@
     </main>
 
     <footer>
-        <p>&copy; 2025NAYAB WEBSTORE. All rights reserved.</p>
+        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
     </footer>
 
     <script src="../js/main.js"></script>
     <script>
-        // Load products from database
+        const apiBaseUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000' 
+            : window.location.origin;
+
         document.addEventListener('DOMContentLoaded', function() {
-            const categoryName = 'skincare';
-            loadCategoryProducts(categoryName);
+            loadProducts();
+            updateCartCount();
         });
 
-        async function loadCategoryProducts(category) {
-            const apiBaseUrl = window.location.hostname === 'localhost' 
-                ? 'http://localhost:5000' 
-                : `http://${window.location.hostname}:5000`;
-            
+        async function loadProducts() {
             try {
-                const response = await fetch(`${apiBaseUrl}/api/products?category=${category}`);
+                const url = `${apiBaseUrl}/api/products?category=skincare`;
+                console.log('Fetching from:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
+                console.log('Products data:', data);
                 
                 const container = document.getElementById('products-container');
                 const emptyMessage = document.getElementById('empty-message');
                 
                 if (data.products && data.products.length > 0) {
-                    emptyMessage.style.display = 'none';
                     container.innerHTML = '';
+                    emptyMessage.style.display = 'none';
                     
                     data.products.forEach(product => {
                         const productCard = document.createElement('div');
                         productCard.className = 'product-card';
+                        
+                        const imageSrc = product.image_url || '../images/placeholder-product.jpg';
+                        
                         productCard.innerHTML = `
-                            <img src="${product.image || '../images/placeholder-product.jpg'}" alt="${product.name}">
+                            <img src="${imageSrc}" alt="${product.name}">
                             <div class="product-info">
                                 <h3>${product.name}</h3>
                                 <p class="price">Rs ${parseFloat(product.price).toLocaleString('en-PK')}</p>
@@ -107,10 +127,10 @@
                         container.appendChild(productCard);
                     });
                     
-                    // Reinitialize add to cart buttons
                     initializeAddToCart();
                 } else {
                     emptyMessage.style.display = 'block';
+                    container.innerHTML = '';
                 }
             } catch (error) {
                 console.error('Error loading products:', error);
@@ -141,18 +161,20 @@
                     }
                     
                     localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
                     
-                    // Update cart count
-                    const cartCount = document.getElementById('cart-count');
-                    if (cartCount) {
-                        const count = cart.reduce((total, item) => total + item.quantity, 0);
-                        cartCount.textContent = count;
-                    }
-                    
-                    // Show message
                     alert(`${productName} added to cart!`);
                 });
             });
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) {
+                cartCountEl.textContent = count;
+            }
         }
     </script>
 </body>
