@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart -NAYAB WEBSTORE</title>
+    <title>Shopping Cart - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .cart-container {
@@ -161,7 +161,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <a href="../index.html">WebStore</a>
+                    <a href="../index.html">NAYAB WEBSTORE</a>
                 </div>
                 <div class="nav-menu" id="nav-menu">
                     <a href="../index.html" class="nav-link">Home</a>
@@ -222,27 +222,31 @@
     </main>
 
     <footer>
-        <p>&copy; 2025NAYAB WEBSTORE. All rights reserved.</p>
+        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
     </footer>
 
-    <script src="../js/main.js"></script>
     <script>
+        // Don't load main.js to avoid cart variable conflict
         document.addEventListener('DOMContentLoaded', function() {
             loadCart();
         });
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        function getCart() {
+            return JSON.parse(localStorage.getItem('cart')) || [];
+        }
 
         function loadCart() {
+            const myCart = getCart(); // Use local variable instead of global
             const cartItemsContainer = document.getElementById('cart-items-container');
             const emptyCartMessage = document.getElementById('empty-cart-message');
             const cartSummaryContainer = document.getElementById('cart-summary-container');
             
-            if (cart.length === 0) {
+            updateCartCount(myCart);
+            
+            if (myCart.length === 0) {
                 cartItemsContainer.style.display = 'none';
                 emptyCartMessage.style.display = 'block';
                 cartSummaryContainer.style.display = 'none';
-                updateCartCount();
                 return;
             }
             
@@ -250,18 +254,16 @@
             emptyCartMessage.style.display = 'none';
             cartSummaryContainer.style.display = 'block';
             
-            // Clear the container
             cartItemsContainer.innerHTML = '';
             
-            // Add each item to the cart
-            cart.forEach((item, index) => {
+            myCart.forEach((item, index) => {
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
                     <img src="../images/placeholder-product.jpg" alt="${item.name}" class="item-image">
                     <div class="item-details">
                         <div class="item-name">${item.name}</div>
-                        <div class="item-price">Rs ${item.price.toFixed(2)}</div>
+                        <div class="item-price">Rs ${parseFloat(item.price).toFixed(2)}</div>
                         <div class="item-actions">
                             <div class="quantity-control">
                                 <button class="quantity-btn" onclick="decreaseQuantity(${index})">-</button>
@@ -276,18 +278,15 @@
                 cartItemsContainer.appendChild(cartItem);
             });
             
-            updateCartSummary();
-            updateCartCount();
+            updateCartSummary(myCart);
         }
 
-        function updateCartSummary() {
-            // Calculate totals
-            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            const shipping = subtotal > 0 ? 250 : 0; // Rs 250 shipping if cart not empty
-            const tax = subtotal * 0.08; // 8% tax
+        function updateCartSummary(myCart) {
+            const subtotal = myCart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
+            const shipping = subtotal > 0 ? 250 : 0;
+            const tax = subtotal * 0.08;
             const total = subtotal + shipping + tax;
             
-            // Update the DOM
             document.getElementById('subtotal').textContent = `Rs ${subtotal.toFixed(2)}`;
             document.getElementById('shipping').textContent = `Rs ${shipping.toFixed(2)}`;
             document.getElementById('tax').textContent = `Rs ${tax.toFixed(2)}`;
@@ -295,15 +294,17 @@
         }
 
         function increaseQuantity(index) {
-            cart[index].quantity += 1;
-            saveCart();
+            const myCart = getCart();
+            myCart[index].quantity += 1;
+            saveCart(myCart);
             loadCart();
         }
 
         function decreaseQuantity(index) {
-            if (cart[index].quantity > 1) {
-                cart[index].quantity -= 1;
-                saveCart();
+            const myCart = getCart();
+            if (myCart[index].quantity > 1) {
+                myCart[index].quantity -= 1;
+                saveCart(myCart);
                 loadCart();
             }
         }
@@ -311,21 +312,30 @@
         function updateQuantity(index, newQuantity) {
             const quantity = parseInt(newQuantity);
             if (quantity > 0) {
-                cart[index].quantity = quantity;
-                saveCart();
+                const myCart = getCart();
+                myCart[index].quantity = quantity;
+                saveCart(myCart);
                 loadCart();
             }
         }
 
         function removeItem(index) {
-            cart.splice(index, 1);
-            saveCart();
+            const myCart = getCart();
+            myCart.splice(index, 1);
+            saveCart(myCart);
             loadCart();
         }
 
-        function saveCart() {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
+        function saveCart(myCart) {
+            localStorage.setItem('cart', JSON.stringify(myCart));
+        }
+
+        function updateCartCount(myCart) {
+            const count = myCart.reduce((total, item) => total + item.quantity, 0);
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) {
+                cartCountEl.textContent = count;
+            }
         }
     </script>
 </body>
