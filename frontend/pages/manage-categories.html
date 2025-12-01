@@ -326,6 +326,9 @@
                     // Save to localStorage for quick access
                     localStorage.setItem(`category_logo_${categoryId}`, data.imageUrl);
                     
+                    // Also save to a global object that can be shared
+                    saveCategoryLogoToServer(categoryId, data.imageUrl);
+                    
                     showNotification(`${categoryId} logo updated successfully!`, 'success');
                     uploadBtn.textContent = 'Upload Logo';
                     uploadBtn.disabled = false;
@@ -354,6 +357,27 @@
             setTimeout(() => {
                 notification.remove();
             }, 3000);
+        }
+
+        // Save category logo reference to server
+        async function saveCategoryLogoToServer(categoryId, imageUrl) {
+            try {
+                // Create a simple JSON object to store
+                const categoryLogos = {
+                    jewellery: localStorage.getItem('category_logo_jewellery') || '',
+                    cosmetics: localStorage.getItem('category_logo_cosmetics') || '',
+                    skincare: localStorage.getItem('category_logo_skincare') || '',
+                    clothes: localStorage.getItem('category_logo_clothes') || ''
+                };
+                categoryLogos[categoryId] = imageUrl;
+
+                // Save to localStorage as a master copy
+                localStorage.setItem('all_category_logos', JSON.stringify(categoryLogos));
+                
+                console.log('Category logos saved:', categoryLogos);
+            } catch (error) {
+                console.error('Error saving category logos:', error);
+            }
         }
     </script>
 </body>

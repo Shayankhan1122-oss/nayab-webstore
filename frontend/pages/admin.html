@@ -352,9 +352,11 @@
                             <tr>
                                 <th>Order ID</th>
                                 <th>Customer</th>
+                                <th>Phone</th>
                                 <th>Total</th>
                                 <th>Status</th>
                                 <th>Date</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="orders-list">
@@ -419,6 +421,19 @@
 
                 <button type="submit" class="submit-btn">Update Product</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div id="order-details-content">
+                <!-- Order details will be loaded here -->
+            </div>
         </div>
     </div>
 
@@ -750,21 +765,97 @@
 
                 if (data.orders && data.orders.length > 0) {
                     ordersList.innerHTML = data.orders.map(order => `
-                        <tr>
+                        <tr style="cursor: pointer;" onclick="viewOrderDetails(${order.id})">
                             <td>#${order.id}</td>
                             <td>${order.customer_name}</td>
+                            <td>${order.customer_phone || 'N/A'}</td>
                             <td>Rs ${order.total_amount}</td>
                             <td>${order.status || 'Pending'}</td>
                             <td>${new Date(order.created_at).toLocaleDateString()}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="event.stopPropagation(); viewOrderDetails(${order.id})">View Details</button>
+                            </td>
                         </tr>
                     `).join('');
                 } else {
-                    ordersList.innerHTML = '<tr><td colspan="5" style="text-align:center">No orders found</td></tr>';
+                    ordersList.innerHTML = '<tr><td colspan="7" style="text-align:center">No orders found</td></tr>';
                 }
             } catch (error) {
                 console.error('Load orders error:', error);
                 showNotification('Failed to load orders', 'error');
             }
+        }
+
+        // View order details
+        async function viewOrderDetails(orderId) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/orders/${orderId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                const order = data.order;
+
+                // Build order details HTML
+                const detailsHTML = `
+                    <div style="padding: 20px;">
+                        <h3>Order #${order.id}</h3>
+                        <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+                        <p><strong>Status:</strong> ${order.status || 'Pending'}</p>
+                        <hr>
+                        
+                        <h4>Customer Information</h4>
+                        <p><strong>Name:</strong> ${order.customer_name}</p>
+                        <p><strong>Email:</strong> ${order.customer_email}</p>
+                        <p><strong>Phone:</strong> ${order.customer_phone}</p>
+                        <p><strong>Shipping Address:</strong> ${order.shipping_address}</p>
+                        ${order.order_notes ? `<p><strong>Notes:</strong> ${order.order_notes}</p>` : ''}
+                        <hr>
+                        
+                        <h4>Order Items</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 10px; text-align: left;">Product</th>
+                                    <th style="padding: 10px; text-align: center;">Quantity</th>
+                                    <th style="padding: 10px; text-align: right;">Price</th>
+                                    <th style="padding: 10px; text-align: right;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${order.order_items.map(item => `
+                                    <tr>
+                                        <td style="padding: 10px;">${item.name}</td>
+                                        <td style="padding: 10px; text-align: center;">${item.quantity}</td>
+                                        <td style="padding: 10px; text-align: right;">Rs ${item.price}</td>
+                                        <td style="padding: 10px; text-align: right;">Rs ${(item.price * item.quantity).toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                        <hr>
+                        
+                        <h4>Order Summary</h4>
+                        <p><strong>Subtotal:</strong> Rs ${order.subtotal || (order.total_amount - (order.delivery_charges || 0))}</p>
+                        <p><strong>Delivery Charges:</strong> Rs ${order.delivery_charges || 0}</p>
+                        <h3 style="margin-top: 10px;"><strong>Total Amount:</strong> Rs ${order.total_amount}</h3>
+                    </div>
+                `;
+
+                document.getElementById('order-details-content').innerHTML = detailsHTML;
+                document.getElementById('order-modal').classList.add('active');
+
+            } catch (error) {
+                console.error('View order error:', error);
+                showNotification('Failed to load order details', 'error');
+            }
+        }
+
+        // Close order modal
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.remove('active');
         }
 
         // Show notification

@@ -23,10 +23,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
         .emoji-placeholder {
             font-size: 80px;
+            position: relative;
+            z-index: 0;
         }
 
         /* Mobile responsive - 2 categories per row on mobile */
@@ -143,16 +149,18 @@
 
     <script src="js/main.js"></script>
     <script>
-        // Load category logos from localStorage
+        // Load category logos - try localStorage first, then check server
         document.addEventListener('DOMContentLoaded', () => {
             const categories = ['jewellery', 'cosmetics', 'skincare', 'clothes'];
             
+            // First, try to load from localStorage
             categories.forEach(categoryId => {
                 const savedLogo = localStorage.getItem(`category_logo_${categoryId}`);
                 if (savedLogo) {
                     const logoContainer = document.getElementById(`logo-${categoryId}`);
                     if (logoContainer) {
-                        logoContainer.innerHTML = `<img src="${savedLogo}" alt="${categoryId}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        // Clear the emoji placeholder and add image
+                        logoContainer.innerHTML = `<img src="${savedLogo}" alt="${categoryId}" onerror="this.parentElement.innerHTML='<span class=\\'emoji-placeholder\\'>${getEmojiForCategory(categoryId)}</span>'" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1;">`;
                     }
                 }
             });
@@ -160,6 +168,16 @@
             // Update cart count
             updateCartCount();
         });
+
+        function getEmojiForCategory(category) {
+            const emojis = {
+                'jewellery': '💍',
+                'cosmetics': '💄',
+                'skincare': '🧴',
+                'clothes': '👗'
+            };
+            return emojis[category] || '🛍️';
+        }
 
         function updateCartCount() {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
