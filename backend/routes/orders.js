@@ -5,23 +5,69 @@ const { authenticateToken, authorizeAdmin } = require('../middleware/auth');
 
 // Place a new order
 router.post('/', (req, res) => {
-    const { customer_name, customer_email, customer_phone, shipping_address, order_items, total_amount } = req.body;
+    const { 
+        customer_name, 
+        customer_email, 
+        customer_phone, 
+        shipping_address, 
+        order_notes,
+        items,
+        subtotal,
+        delivery_charges,
+        total_amount 
+    } = req.body;
 
-    if (!customer_name || !customer_email || !customer_phone || !shipping_address || !order_items || !total_amount) {
+    console.log('📦 Order received:', req.body);
+
+    if (!customer_name || !customer_email || !customer_phone || !shipping_address || !items || !total_amount) {
+        console.log('❌ Missing required fields');
         return res.status(400).json({ error: 'All order details are required' });
     }
 
-    // Convert order_items to JSON string
-    const orderItemsJson = JSON.stringify(order_items);
+    // Convert items to JSON string
+    const orderItemsJson = JSON.stringify(items);
 
-    const query = 'INSERT INTO orders (customer_name, customer_email, customer_phone, shipping_address, order_items, total_amount) VALUES (?, ?, ?, ?, ?, ?)';
-    const params = [customer_name, customer_email, customer_phone, shipping_address, orderItemsJson, total_amount];
+    const query = `INSERT INTO orders 
+        (customer_name, customer_email, customer_phone, shipping_address, order_items, total_amount, order_notes, subtotal, delivery_charges) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    
+    const params = [
+        customer_name, 
+        customer_email, 
+        customer_phone, 
+        shipping_address, 
+        orderItemsJson, 
+        total_amount,
+        order_notes || '',
+        subtotal || 0,
+        delivery_charges || 0
+    ];
 
     db.run(query, params, function(err) {
         if (err) {
-            res.status(500).json({ error: err.message });
+            console.error('❌ Database error:', err.message);
+            
+            // Check if columns are missing
+            if (err.message.includes('no column')) {
+                console.log('⚠️ Database schema needs updating. Trying basic insert...');
+                
+                // Fallback to basic insert without new columns
+                const basicQuery = 'INSERT INTO orders (customer_name, customer_email, customer_phone, shipping_address, order_items, total_amount) VALUES (?, ?, ?, ?, ?, ?)';
+                const basicParams = [customer_name, customer_email, customer_phone, shipping_address, orderItemsJson, total_amount];
+                
+                db.run(basicQuery, basicParams, function(fallbackErr) {
+                    if (fallbackErr) {
+                        return res.status(500).json({ error: fallbackErr.message });
+                    }
+                    console.log('✅ Order created with basic schema');
+                    res.status(201).json({ id: this.lastID, message: 'Order placed successfully' });
+                });
+            } else {
+                res.status(500).json({ error: err.message });
+            }
             return;
         }
+        console.log('✅ Order created successfully:', this.lastID);
         res.status(201).json({ id: this.lastID, message: 'Order placed successfully' });
     });
 });

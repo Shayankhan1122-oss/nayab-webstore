@@ -5,6 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NAYAB WEBSTORE - Premium Shopping Experience</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Category logo styling */
+        .card-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .emoji-placeholder {
+            font-size: 80px;
+        }
+
+        /* Mobile responsive - 2 categories per row on mobile */
+        @media (max-width: 768px) {
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 15px !important;
+            }
+            
+            .category-card {
+                padding: 15px !important;
+            }
+            
+            .card-image {
+                height: 120px !important;
+            }
+
+            .emoji-placeholder {
+                font-size: 50px !important;
+            }
+            
+            .category-card h3 {
+                font-size: 14px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -42,44 +90,44 @@
         <section class="categories">
             <h2>Shop by Category</h2>
             <div class="category-grid">
-                <div class="category-card">
+                <div class="category-card" data-category="jewellery">
                     <a href="pages/jewellery.html">
                         <div class="card-content">
-                            <div class="card-image">
-                                <img src="images/jewellery.jpg" alt="Jewellery">
+                            <div class="card-image" id="logo-jewellery">
+                                <span class="emoji-placeholder">💍</span>
                             </div>
                             <h3>Jewellery</h3>
                         </div>
                     </a>
                 </div>
                 
-                <div class="category-card">
+                <div class="category-card" data-category="cosmetics">
                     <a href="pages/cosmetics.html">
                         <div class="card-content">
-                            <div class="card-image">
-                                <img src="images/cosmetics.jpg" alt="Cosmetics">
+                            <div class="card-image" id="logo-cosmetics">
+                                <span class="emoji-placeholder">💄</span>
                             </div>
                             <h3>Cosmetics</h3>
                         </div>
                     </a>
                 </div>
                 
-                <div class="category-card">
+                <div class="category-card" data-category="skincare">
                     <a href="pages/skincare.html">
                         <div class="card-content">
-                            <div class="card-image">
-                                <img src="images/skincare.jpg" alt="Skincare">
+                            <div class="card-image" id="logo-skincare">
+                                <span class="emoji-placeholder">🧴</span>
                             </div>
                             <h3>Skincare</h3>
                         </div>
                     </a>
                 </div>
                 
-                <div class="category-card">
+                <div class="category-card" data-category="clothes">
                     <a href="pages/clothes.html">
                         <div class="card-content">
-                            <div class="card-image">
-                                <img src="images/clothes.jpg" alt="Clothes">
+                            <div class="card-image" id="logo-clothes">
+                                <span class="emoji-placeholder">👗</span>
                             </div>
                             <h3>Clothes</h3>
                         </div>
@@ -94,5 +142,33 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Load category logos from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const categories = ['jewellery', 'cosmetics', 'skincare', 'clothes'];
+            
+            categories.forEach(categoryId => {
+                const savedLogo = localStorage.getItem(`category_logo_${categoryId}`);
+                if (savedLogo) {
+                    const logoContainer = document.getElementById(`logo-${categoryId}`);
+                    if (logoContainer) {
+                        logoContainer.innerHTML = `<img src="${savedLogo}" alt="${categoryId}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    }
+                }
+            });
+            
+            // Update cart count
+            updateCartCount();
+        });
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+            }
+        }
+    </script>
 </body>
 </html>
