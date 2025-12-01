@@ -2,89 +2,77 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const { authenticateToken, authorizeAdmin } = require('../middleware/auth');
-
-// Ensure upload directories exist
-const uploadsDir = path.join(__dirname, '../uploads');
-const productsDir = path.join(uploadsDir, 'products');
-const categoriesDir = path.join(uploadsDir, 'categories');
-
-[uploadsDir, productsDir, categoriesDir].forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
 
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const type = req.query.type || 'products';
-        const uploadPath = type === 'categories' ? categoriesDir : productsDir;
+        const type = req.body.type || 'product';
+        const uploadPath = type === 'category' 
+            ? path.join(__dirname, '../uploads/categories')
+            : path.join(__dirname, '../uploads/products');
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+        cb(null, uniqueName);
     }
 });
 
-// File filter - only images
+// File filter for images only
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
     } else {
-        cb(new Error('Only image files are allowed!'));
+        cb(new Error('Only image files are allowed!'), false);
     }
 };
 
-const upload = multer({
+const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-    fileFilter: fileFilter
+    fileFilter: fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-// Upload endpoint (admin only)
-router.post('/', authenticateToken, authorizeAdmin, upload.single('image'), (req, res) => {
+// Upload product image (admin only)
+router.post('/product', authenticateToken, authorizeAdmin, upload.single('image'), (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        const type = req.query.type || 'products';
-        const imageUrl = `/uploads/${type}/${req.file.filename}`;
-
-        res.json({
+        const imageUrl = `/uploads/products/${req.file.filename}`;
+        res.json({ 
             message: 'Image uploaded successfully',
             imageUrl: imageUrl,
             filename: req.file.filename
         });
     } catch (error) {
         console.error('Upload error:', error);
-        res.status(500).json({ error: 'Failed to upload image' });
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Delete image endpoint (admin only)
-router.delete('/:type/:filename', authenticateToken, authorizeAdmin, (req, res) => {
+// Upload category logo (admin only)
+router.post('/category', authenticateToken, authorizeAdmin, upload.single('image'), (req, res) => {
     try {
-        const { type, filename } = req.params;
-        const uploadPath = type === 'categories' ? categoriesDir : productsDir;
-        const filePath = path.join(uploadPath, filename);
-
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-            res.json({ message: 'Image deleted successfully' });
-        } else {
-            res.status(404).json({ error: 'Image not found' });
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
         }
+
+        const imageUrl = `/uploads/categories/${req.file.filename}`;
+        const categoryId = req.body.categoryId;
+
+        res.json({ 
+            message: 'Category logo uploaded successfully',
+            imageUrl: imageUrl,
+            filename: req.file.filename,
+            categoryId: categoryId
+        });
     } catch (error) {
-        console.error('Delete error:', error);
-        res.status(500).json({ error: 'Failed to delete image' });
+        console.error('Upload error:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 

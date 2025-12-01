@@ -3,147 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout -NAYAB WEBSTORE</title>
+    <title>Checkout - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .checkout-container {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
+            margin: 40px auto;
+            padding: 20px;
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
         }
-        
+
+        .checkout-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .order-summary {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item.total {
+            font-size: 20px;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            border-bottom: none;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .place-order-btn:hover {
+            background: #218838;
+        }
+
+        .order-items {
+            margin-top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
         @media (max-width: 768px) {
             .checkout-container {
                 grid-template-columns: 1fr;
             }
-        }
-        
-        .checkout-header {
-            grid-column: span 2;
-            margin-bottom: 2rem;
-        }
-        
-        @media (max-width: 768px) {
-            .checkout-header {
-                grid-column: span 1;
-            }
-        }
-        
-        .billing-details {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        @media (max-width: 480px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        
-        .order-summary {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
-        
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-            margin-top: 1rem;
-        }
-        
-        .place-order-btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 1.5rem;
-        }
-        
-        .place-order-btn:hover {
-            background-color: #27ae60;
-        }
-        
-        .back-to-cart {
-            display: inline-block;
-            margin-bottom: 1rem;
-            color: #4a6cf7;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .back-to-cart:hover {
-            text-decoration: underline;
-        }
-        
-        .notification {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .notification.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .notification.error {
-            background-color: #f8d7da;
-            color: #721c24;
         }
     </style>
 </head>
@@ -152,21 +106,11 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <a href="../index.html">WebStore</a>
+                    <a href="../index.html">NAYAB WEBSTORE</a>
                 </div>
                 <div class="nav-menu" id="nav-menu">
                     <a href="../index.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">About</a>
-                    <a href="cart.html" class="nav-link cart-icon">
-                        <span>Cart</span>
-                        <span class="cart-count" id="cart-count">0</span>
-                    </a>
-                    <a href="admin-login.html" class="nav-link">Admin</a>
-                </div>
-                <div class="hamburger" id="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+                    <a href="cart.html" class="nav-link">Cart</a>
                 </div>
             </div>
         </nav>
@@ -174,211 +118,182 @@
 
     <main>
         <div class="checkout-container">
-            <div class="checkout-header">
+            <div class="checkout-form">
                 <h1>Checkout</h1>
-                <a href="cart.html" class="back-to-cart">&larr; Back to Cart</a>
-            </div>
-
-            <div class="billing-details">
-                <h2>Delivery Information</h2>
-                
-                <div id="notification" class="notification"></div>
-                
                 <form id="checkout-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="customer-name">Full Name</label>
-                            <input type="text" id="customer-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="customer-email">Email</label>
-                            <input type="email" id="customer-email" required>
-                        </div>
-                    </div>
-                    
                     <div class="form-group">
-                        <label for="customer-phone">Phone Number</label>
-                        <input type="tel" id="customer-phone" placeholder="+92 3XX XXXXXXX" required>
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="shipping-address">Shipping Address</label>
-                        <input type="text" id="shipping-address" placeholder="Street address" required>
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="city">City</label>
-                            <input type="text" id="city" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="state">Province</label>
-                            <input type="text" id="state" placeholder="e.g., Punjab, Sindh" required>
-                        </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+92 3XX XXXXXXX" required>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="zip">Postal Code</label>
-                            <input type="text" id="zip" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="country">Country</label>
-                            <input type="text" id="country" value="Pakistan" required>
-                        </div>
+
+                    <div class="form-group">
+                        <label for="address">Street Address *</label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" name="city" placeholder="e.g., Karachi, Lahore, Islamabad" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="province">Province *</label>
+                        <select id="province" name="province" required>
+                            <option value="">Select Province</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Sindh">Sindh</option>
+                            <option value="KPK">Khyber Pakhtunkhwa</option>
+                            <option value="Balochistan">Balochistan</option>
+                            <option value="Islamabad">Islamabad Capital Territory</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="postal">Postal Code</label>
+                        <input type="text" id="postal" name="postal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Order Notes (Optional)</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Any special instructions?"></textarea>
+                    </div>
+
                     <button type="submit" class="place-order-btn">Place Order</button>
                 </form>
             </div>
-            
+
             <div class="order-summary">
                 <h2>Order Summary</h2>
-                <div id="order-items">
-                    <!-- Items will be loaded here -->
+                <div class="order-items" id="order-items">
+                    <!-- Order items will be loaded here -->
                 </div>
-                
-                <div class="summary-row">
+                <div class="summary-item">
                     <span>Subtotal:</span>
-                    <span id="subtotal">Rs 0.00</span>
+                    <span id="subtotal">Rs 0</span>
                 </div>
-                <div class="summary-row">
-                    <span>Shipping:</span>
-                    <span id="shipping">Rs 0.00</span>
+                <div class="summary-item">
+                    <span>Delivery:</span>
+                    <span id="delivery">Rs 0</span>
                 </div>
-                <div class="summary-row">
-                    <span>Tax:</span>
-                    <span id="tax">Rs 0.00</span>
-                </div>
-                <div class="summary-total">
+                <div class="summary-item total">
                     <span>Total:</span>
-                    <span id="total">Rs 0.00</span>
+                    <span id="total">Rs 0</span>
                 </div>
             </div>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2025NAYAB WEBSTORE. All rights reserved.</p>
+        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
     </footer>
 
-    <script src="../js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCartAndSummary();
-            
-            const checkoutForm = document.getElementById('checkout-form');
-            checkoutForm.addEventListener('submit', placeOrder);
-        });
+        const apiBaseUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000' 
+            : window.location.origin;
 
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        function loadCartAndSummary() {
-            if (cart.length === 0) {
-                window.location.href = 'cart.html';
-                return;
+        // Calculate delivery based on subtotal
+        function calculateDelivery(subtotal) {
+            if (subtotal >= 500 && subtotal <= 999) {
+                return 0; // FREE delivery for Rs 500-999
+            } else if (subtotal >= 1000 && subtotal <= 1999) {
+                return 250;
+            } else if (subtotal >= 2000 && subtotal <= 4000) {
+                return 350;
+            } else if (subtotal > 4000) {
+                return 500;
             }
-            
-            const orderItemsContainer = document.getElementById('order-items');
-            orderItemsContainer.innerHTML = '';
-            
-            // Add each item to the order summary
-            cart.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'summary-item';
-                itemElement.innerHTML = `
-                    <span>${item.name} (x${item.quantity})</span>
-                    <span>Rs ${(item.price * item.quantity).toFixed(2)}</span>
-                `;
-                orderItemsContainer.appendChild(itemElement);
-            });
-            
-            updateOrderSummary();
+            return 0;
         }
 
-        function updateOrderSummary() {
-            // Calculate totals
-            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-            const shipping = subtotal > 0 ? 250 : 0; // Rs 250 shipping if cart not empty
-            const tax = subtotal * 0.08; // 8% tax
-            const total = subtotal + shipping + tax;
-            
-            // Update the DOM
+        function displayOrderSummary() {
+            const orderItemsContainer = document.getElementById('order-items');
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const delivery = calculateDelivery(subtotal);
+            const total = subtotal + delivery;
+
+            // Display order items
+            orderItemsContainer.innerHTML = cart.map(item => `
+                <div class="order-item">
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span>Rs ${(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+            `).join('');
+
+            // Update summary
             document.getElementById('subtotal').textContent = `Rs ${subtotal.toFixed(2)}`;
-            document.getElementById('shipping').textContent = `Rs ${shipping.toFixed(2)}`;
-            document.getElementById('tax').textContent = `Rs ${tax.toFixed(2)}`;
+            document.getElementById('delivery').textContent = `Rs ${delivery.toFixed(2)}`;
             document.getElementById('total').textContent = `Rs ${total.toFixed(2)}`;
         }
 
-        function placeOrder(e) {
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Get form values
-            const customerName = document.getElementById('customer-name').value;
-            const customerEmail = document.getElementById('customer-email').value;
-            const customerPhone = document.getElementById('customer-phone').value;
-            const shippingAddress = document.getElementById('shipping-address').value 
-                + ', ' + document.getElementById('city').value 
-                + ', ' + document.getElementById('state').value 
-                + ' ' + document.getElementById('zip').value 
-                + ', ' + document.getElementById('country').value;
-            
-            // Prepare order data
-            const orderData = {
-                customer_name: customerName,
-                customer_email: customerEmail,
-                customer_phone: customerPhone,
-                shipping_address: shippingAddress,
-                order_items: cart,
-                total_amount: parseFloat(document.getElementById('total').textContent.replace('Rs ', ''))
-            };
-            
-            // Auto-detect API URL for mobile/desktop access
-            const apiBaseUrl = window.location.hostname === 'localhost' 
-                ? 'http://localhost:5000' 
-                : `http://${window.location.hostname}:5000`;
-            
-            // Send order to backend
-            fetch(`${apiBaseUrl}/api/orders`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                // Clear cart after successful order
-                localStorage.removeItem('cart');
-                
-                // Show success message and redirect
-                showNotification('Order placed successfully! Redirecting to home...', 'success');
-                
-                setTimeout(() => {
-                    window.location.href = '../index.html';
-                }, 2000);
-            })
-            .catch(error => {
-                console.error('Error placing order:', error);
-                showNotification(`Error: ${error.message}`, 'error');
-            });
-        }
 
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.style.display = 'block';
-            
-            // Hide notification after 3 seconds
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
-        }
+            const formData = new FormData(e.target);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const delivery = calculateDelivery(subtotal);
+            const total = subtotal + delivery;
+
+            const orderData = {
+                customer_name: formData.get('name'),
+                customer_email: formData.get('email'),
+                customer_phone: formData.get('phone'),
+                shipping_address: `${formData.get('address')}, ${formData.get('city')}, ${formData.get('province')}${formData.get('postal') ? ', ' + formData.get('postal') : ''}`,
+                order_notes: formData.get('notes'),
+                items: cart,
+                subtotal: subtotal,
+                delivery_charges: delivery,
+                total_amount: total
+            };
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                    
+                    // Show success message
+                    alert('Order placed successfully! We will contact you soon.');
+                    window.location.href = '../index.html';
+                } else {
+                    alert('Error placing order: ' + (data.error || 'Please try again'));
+                }
+            } catch (error) {
+                console.error('Order error:', error);
+                alert('Failed to place order. Please try again.');
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                window.location.href = '../index.html';
+                return;
+            }
+            displayOrderSummary();
+        });
     </script>
 </body>
 </html>

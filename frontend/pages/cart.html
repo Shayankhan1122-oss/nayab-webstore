@@ -8,151 +8,170 @@
     <style>
         .cart-container {
             max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
+            margin: 40px auto;
+            padding: 20px;
         }
-        
-        .cart-header {
-            margin-bottom: 2rem;
-        }
-        
+
         .cart-items {
             background: white;
             border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        
+
         .cart-item {
             display: flex;
-            align-items: center;
-            padding: 1rem 0;
+            gap: 20px;
+            padding: 20px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .cart-item:last-child {
             border-bottom: none;
         }
-        
+
         .item-image {
             width: 100px;
             height: 100px;
             object-fit: cover;
-            border-radius: 4px;
-            margin-right: 1rem;
+            border-radius: 8px;
         }
-        
+
         .item-details {
             flex: 1;
         }
-        
+
         .item-name {
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
         }
-        
+
         .item-price {
-            color: #4a6cf7;
+            color: #28a745;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 0.5rem;
         }
-        
-        .item-actions {
+
+        .quantity-controls {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 10px;
+            margin-top: 10px;
         }
-        
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
+
         .quantity-btn {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .quantity-input {
-            width: 50px;
-            text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0.25rem;
-        }
-        
-        .remove-btn {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .cart-summary {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-        }
-        
-        .summary-total {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            font-size: 1.2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-            margin-top: 1rem;
-        }
-        
-        .checkout-btn {
-            display: block;
-            width: 100%;
-            padding: 1rem;
-            background-color: #4a6cf7;
+            padding: 5px 12px;
+            background: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
-            font-size: 1.1rem;
             cursor: pointer;
-            margin-top: 1.5rem;
-            text-align: center;
-            text-decoration: none;
         }
-        
+
+        .quantity-btn:hover {
+            background: #0056b3;
+        }
+
+        .remove-btn {
+            padding: 8px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background: #c82333;
+        }
+
+        .cart-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-row.total {
+            font-size: 20px;
+            font-weight: bold;
+            border-top: 2px solid #333;
+            border-bottom: none;
+            margin-top: 10px;
+        }
+
+        .delivery-info {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            margin: 15px 0;
+            color: #004085;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
         .checkout-btn:hover {
-            background-color: #3a5be0;
+            background: #218838;
         }
-        
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
         .empty-cart {
             text-align: center;
-            padding: 3rem;
-            color: #666;
+            padding: 60px 20px;
         }
-        
+
+        .empty-cart h2 {
+            margin-bottom: 20px;
+        }
+
         .continue-shopping {
             display: inline-block;
-            margin-top: 1rem;
-            color: #4a6cf7;
+            padding: 12px 30px;
+            background: #007bff;
+            color: white;
             text-decoration: none;
-            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 20px;
         }
-        
-        .continue-shopping:hover {
-            text-decoration: underline;
+
+        @media (max-width: 768px) {
+            .cart-container > div {
+                grid-template-columns: 1fr !important;
+            }
+
+            .cart-item {
+                flex-direction: column;
+            }
+
+            .item-image {
+                width: 100%;
+                height: 200px;
+            }
         }
     </style>
 </head>
@@ -166,11 +185,11 @@
                 <div class="nav-menu" id="nav-menu">
                     <a href="../index.html" class="nav-link">Home</a>
                     <a href="#" class="nav-link">About</a>
-                    <a href="#" class="nav-link cart-icon active">
+                    <a href="cart.html" class="nav-link cart-icon">
                         <span>Cart</span>
                         <span class="cart-count" id="cart-count">0</span>
                     </a>
-                    <a href="admin-login.html" class="nav-link">Admin</a>
+                    <a href="admin-login.html" class="nav-link">Admin Login</a>
                 </div>
                 <div class="hamburger" id="hamburger">
                     <span class="bar"></span>
@@ -183,39 +202,33 @@
 
     <main>
         <div class="cart-container">
-            <div class="cart-header">
-                <h1>Your Shopping Cart</h1>
-            </div>
+            <h1>Shopping Cart</h1>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                <div class="cart-items" id="cart-items">
+                    <!-- Cart items will be loaded here -->
+                </div>
 
-            <div id="cart-items-container">
-                <!-- Cart items will be loaded here -->
-            </div>
-
-            <div id="empty-cart-message" class="empty-cart" style="display: none;">
-                <h2>Your cart is empty</h2>
-                <p>Looks like you haven't added any items to your cart yet.</p>
-                <a href="../index.html" class="continue-shopping">Continue Shopping</a>
-            </div>
-
-            <div id="cart-summary-container" style="display: none;">
                 <div class="cart-summary">
+                    <h2>Order Summary</h2>
                     <div class="summary-row">
                         <span>Subtotal:</span>
-                        <span id="subtotal">Rs 0.00</span>
+                        <span id="subtotal">Rs 0</span>
                     </div>
                     <div class="summary-row">
-                        <span>Shipping:</span>
-                        <span id="shipping">Rs 0.00</span>
+                        <span>Delivery:</span>
+                        <span id="shipping">Rs 0</span>
                     </div>
-                    <div class="summary-row">
-                        <span>Tax:</span>
-                        <span id="tax">Rs 0.00</span>
+                    <div class="delivery-info" id="delivery-info">
+                        Delivery charges based on order total
                     </div>
-                    <div class="summary-total">
+                    <div class="summary-row total">
                         <span>Total:</span>
-                        <span id="total">Rs 0.00</span>
+                        <span id="total">Rs 0</span>
                     </div>
-                    <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
+                    <button class="checkout-btn" id="checkout-btn" onclick="proceedToCheckout()">
+                        Proceed to Checkout
+                    </button>
                 </div>
             </div>
         </div>
@@ -226,116 +239,148 @@
     </footer>
 
     <script>
-        // Don't load main.js to avoid cart variable conflict
-        document.addEventListener('DOMContentLoaded', function() {
-            loadCart();
-        });
+        // Get cart from localStorage
+        const cartData = JSON.parse(localStorage.getItem('cart')) || [];
 
-        function getCart() {
-            return JSON.parse(localStorage.getItem('cart')) || [];
+        // Calculate delivery charges based on subtotal
+        function calculateDelivery(subtotal) {
+            if (subtotal >= 500 && subtotal <= 999) {
+                return 0; // FREE delivery for Rs 500-999
+            } else if (subtotal >= 1000 && subtotal <= 1999) {
+                return 250;
+            } else if (subtotal >= 2000 && subtotal <= 4000) {
+                return 350;
+            } else if (subtotal > 4000) {
+                return 500;
+            }
+            return 0;
         }
 
-        function loadCart() {
-            const myCart = getCart(); // Use local variable instead of global
-            const cartItemsContainer = document.getElementById('cart-items-container');
-            const emptyCartMessage = document.getElementById('empty-cart-message');
-            const cartSummaryContainer = document.getElementById('cart-summary-container');
-            
-            updateCartCount(myCart);
-            
-            if (myCart.length === 0) {
-                cartItemsContainer.style.display = 'none';
-                emptyCartMessage.style.display = 'block';
-                cartSummaryContainer.style.display = 'none';
-                return;
+        // Get delivery info text
+        function getDeliveryInfo(subtotal) {
+            if (subtotal < 500) {
+                return '⚠️ Minimum order Rs 500 required';
+            } else if (subtotal >= 500 && subtotal <= 999) {
+                return '🎉 FREE Delivery (Orders Rs 500-999)';
+            } else if (subtotal >= 1000 && subtotal <= 1999) {
+                return '📦 Delivery: Rs 250 (Orders Rs 1,000-1,999)';
+            } else if (subtotal >= 2000 && subtotal <= 4000) {
+                return '📦 Delivery: Rs 350 (Orders Rs 2,000-4,000)';
+            } else {
+                return '📦 Delivery: Rs 500 (Orders above Rs 4,000)';
             }
+        }
+
+        function displayCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
             
-            cartItemsContainer.style.display = 'block';
-            emptyCartMessage.style.display = 'none';
-            cartSummaryContainer.style.display = 'block';
-            
-            cartItemsContainer.innerHTML = '';
-            
-            myCart.forEach((item, index) => {
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <img src="../images/placeholder-product.jpg" alt="${item.name}" class="item-image">
-                    <div class="item-details">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-price">Rs ${parseFloat(item.price).toFixed(2)}</div>
-                        <div class="item-actions">
-                            <div class="quantity-control">
-                                <button class="quantity-btn" onclick="decreaseQuantity(${index})">-</button>
-                                <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
-                                <button class="quantity-btn" onclick="increaseQuantity(${index})">+</button>
-                            </div>
-                            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
-                        </div>
+            if (cartData.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="empty-cart">
+                        <h2>Your cart is empty</h2>
+                        <p>Add some products to get started!</p>
+                        <a href="../index.html" class="continue-shopping">Continue Shopping</a>
                     </div>
                 `;
-                
-                cartItemsContainer.appendChild(cartItem);
-            });
-            
-            updateCartSummary(myCart);
-        }
-
-        function updateCartSummary(myCart) {
-            const subtotal = myCart.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
-            const shipping = subtotal > 0 ? 250 : 0;
-            const tax = subtotal * 0.08;
-            const total = subtotal + shipping + tax;
-            
-            document.getElementById('subtotal').textContent = `Rs ${subtotal.toFixed(2)}`;
-            document.getElementById('shipping').textContent = `Rs ${shipping.toFixed(2)}`;
-            document.getElementById('tax').textContent = `Rs ${tax.toFixed(2)}`;
-            document.getElementById('total').textContent = `Rs ${total.toFixed(2)}`;
-        }
-
-        function increaseQuantity(index) {
-            const myCart = getCart();
-            myCart[index].quantity += 1;
-            saveCart(myCart);
-            loadCart();
-        }
-
-        function decreaseQuantity(index) {
-            const myCart = getCart();
-            if (myCart[index].quantity > 1) {
-                myCart[index].quantity -= 1;
-                saveCart(myCart);
-                loadCart();
+                updateSummary();
+                return;
             }
+
+            cartItemsContainer.innerHTML = cartData.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.image || '../images/placeholder-product.jpg'}" 
+                         alt="${item.name}" 
+                         class="item-image">
+                    <div class="item-details">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-price">Rs ${item.price.toFixed(2)}</div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                            <span>Quantity: ${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+                </div>
+            `).join('');
+
+            updateSummary();
         }
 
-        function updateQuantity(index, newQuantity) {
-            const quantity = parseInt(newQuantity);
-            if (quantity > 0) {
-                const myCart = getCart();
-                myCart[index].quantity = quantity;
-                saveCart(myCart);
-                loadCart();
+        function updateQuantity(index, change) {
+            if (cartData[index]) {
+                cartData[index].quantity += change;
+                
+                if (cartData[index].quantity <= 0) {
+                    cartData.splice(index, 1);
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cartData));
+                displayCart();
+                updateCartCount();
             }
         }
 
         function removeItem(index) {
-            const myCart = getCart();
-            myCart.splice(index, 1);
-            saveCart(myCart);
-            loadCart();
+            cartData.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cartData));
+            displayCart();
+            updateCartCount();
         }
 
-        function saveCart(myCart) {
-            localStorage.setItem('cart', JSON.stringify(myCart));
-        }
+        function updateSummary() {
+            const subtotal = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const delivery = calculateDelivery(subtotal);
+            const total = subtotal + delivery;
 
-        function updateCartCount(myCart) {
-            const count = myCart.reduce((total, item) => total + item.quantity, 0);
-            const cartCountEl = document.getElementById('cart-count');
-            if (cartCountEl) {
-                cartCountEl.textContent = count;
+            document.getElementById('subtotal').textContent = `Rs ${subtotal.toFixed(2)}`;
+            document.getElementById('shipping').textContent = `Rs ${delivery.toFixed(2)}`;
+            document.getElementById('total').textContent = `Rs ${total.toFixed(2)}`;
+            document.getElementById('delivery-info').textContent = getDeliveryInfo(subtotal);
+
+            // Disable checkout if below minimum
+            const checkoutBtn = document.getElementById('checkout-btn');
+            if (subtotal < 500) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.textContent = 'Minimum Order Rs 500';
+            } else {
+                checkoutBtn.disabled = false;
+                checkoutBtn.textContent = 'Proceed to Checkout';
             }
+        }
+
+        function updateCartCount() {
+            const count = cartData.reduce((total, item) => total + item.quantity, 0);
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
+            }
+        }
+
+        function proceedToCheckout() {
+            const subtotal = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (subtotal < 500) {
+                alert('Minimum order amount is Rs 500');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        }
+
+        // Initialize cart on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            displayCart();
+            updateCartCount();
+        });
+
+        // Mobile menu toggle
+        const hamburger = document.querySelector('#hamburger');
+        const navMenu = document.querySelector('#nav-menu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
         }
     </script>
 </body>
