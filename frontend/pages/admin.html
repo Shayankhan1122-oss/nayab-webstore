@@ -7,184 +7,243 @@
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .admin-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 2rem;
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 20px;
         }
-        
-        .admin-panel {
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .admin-nav button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .admin-nav button.active {
+            background: #0056b3;
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .add-product-form {
             background: white;
+            padding: 25px;
             border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
-        
+
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 15px;
         }
-        
+
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
             font-weight: bold;
         }
-        
-        .form-group input, 
-        .form-group select, 
+
+        .form-group input,
+        .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.5rem;
+            padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 1rem;
         }
 
         .image-upload-section {
             border: 2px dashed #ddd;
+            padding: 20px;
             border-radius: 8px;
-            padding: 1.5rem;
             text-align: center;
-            background: #f9f9f9;
-            margin-bottom: 1rem;
-        }
-
-        .image-upload-section input[type="file"] {
-            display: none;
-        }
-
-        .upload-btn {
-            background: #4a6cf7;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: inline-block;
-        }
-
-        .upload-btn:hover {
-            background: #3a5be0;
+            margin-bottom: 15px;
         }
 
         .image-preview {
-            margin-top: 1rem;
             max-width: 200px;
             max-height: 200px;
-            border-radius: 8px;
+            margin: 15px auto;
             display: none;
         }
 
-        .image-preview.show {
-            display: block;
-            margin: 1rem auto;
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
         }
-        
-        .btn {
-            padding: 0.75rem 1.5rem;
-            background-color: #4a6cf7;
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
             color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .products-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-table th,
+        .products-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .products-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            margin-right: 5px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
-            margin-right: 0.5rem;
-        }
-        
-        .btn:hover {
-            background-color: #3a5be0;
-        }
-        
-        .btn-danger {
-            background-color: #e74c3c;
-        }
-        
-        .btn-success {
-            background-color: #2ecc71;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 2rem;
-        }
-        
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        th {
-            background-color: #f8f9fa;
         }
 
-        .product-image-thumb {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 4px;
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
         }
-        
-        .notification {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            display: none;
-        }
-        
-        .notification.success {
-            background-color: #d4edda;
-            color: #155724;
-            display: block;
-        }
-        
-        .notification.error {
-            background-color: #f8d7da;
-            color: #721c24;
-            display: block;
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
         }
 
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            overflow-y: auto;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
+            background: white;
+            padding: 30px;
             border-radius: 8px;
-            width: 80%;
             max-width: 600px;
-            max-height: 80vh;
+            width: 90%;
+            max-height: 90vh;
             overflow-y: auto;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
             cursor: pointer;
         }
 
-        .close:hover {
-            color: #000;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
         }
 
-        .admin-logout {
-            background-color: #e74c3c;
-            color: white;
-            padding: 0.5rem 1rem;
-            text-decoration: none;
-            border-radius: 4px;
+        .notification.success {
+            background: #28a745;
+        }
+
+        .notification.error {
+            background: #dc3545;
         }
     </style>
 </head>
@@ -195,18 +254,8 @@
                 <div class="nav-logo">
                     <a href="../index.html">NAYAB WEBSTORE</a>
                 </div>
-                <div class="nav-menu" id="nav-menu">
-                    <a href="../index.html" class="nav-link">Home</a>
-                    <a href="../pages/cart.html" class="nav-link cart-icon">
-                        <span>Cart</span>
-                        <span class="cart-count" id="cart-count">0</span>
-                    </a>
-                    <a href="#" class="nav-link admin-logout" id="logout-btn">Logout</a>
-                </div>
-                <div class="hamburger" id="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+                <div class="nav-menu">
+                    <a href="../index.html" class="nav-link">View Store</a>
                 </div>
             </div>
         </nav>
@@ -214,206 +263,238 @@
 
     <main>
         <div class="admin-container">
-            <h1>Admin Dashboard</h1>
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
 
-            <div class="admin-panel">
-                <h2>Add New Product</h2>
-                <div id="notification" class="notification"></div>
-                
-                <form id="product-form">
-                    <div class="form-group">
-                        <label>Product Image</label>
-                        <div class="image-upload-section">
-                            <input type="file" id="product-image" accept="image/*">
-                            <label for="product-image" class="upload-btn">Choose Image</label>
-                            <p style="margin-top: 0.5rem; color: #666;">Max size: 5MB</p>
-                            <img id="image-preview" class="image-preview" alt="Preview">
+            <div class="admin-nav">
+                <button class="active" onclick="showSection('products')">Manage Products</button>
+                <button onclick="showSection('orders')">View Orders</button>
+                <button onclick="window.location.href='manage-categories.html'">Manage Categories</button>
+            </div>
+
+            <!-- Products Section -->
+            <div id="products-section" class="section active">
+                <div class="add-product-form">
+                    <h2>Add New Product</h2>
+                    <form id="add-product-form">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="product-name" required>
                         </div>
-                        <input type="hidden" id="image_url">
-                    </div>
 
-                    <div class="form-group">
-                        <label for="name">Product Name</label>
-                        <input type="text" id="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="price">Price (PKR)</label>
-                        <input type="number" id="price" step="0.01" min="0" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <select id="category" required>
-                            <option value="">Select a category</option>
-                            <option value="jewellery">Jewellery</option>
-                            <option value="cosmetics">Cosmetics</option>
-                            <option value="skincare">Skincare</option>
-                            <option value="clothes">Clothes</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="stock_quantity">Stock Quantity</label>
-                        <input type="number" id="stock_quantity" min="0" value="0" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-success">Add Product</button>
-                </form>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="product-description" rows="3"></textarea>
+                        </div>
 
-                <h2 style="margin-top: 2rem;">Manage Products</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="products-list"></tbody>
-                </table>
+                        <div class="form-group">
+                            <label>Price (PKR) *</label>
+                            <input type="number" id="product-price" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="product-category" required>
+                                <option value="">Select a category</option>
+                                <option value="jewellery">Jewellery</option>
+                                <option value="cosmetics">Cosmetics</option>
+                                <option value="skincare">Skincare</option>
+                                <option value="clothes">Clothes</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Stock Quantity *</label>
+                            <input type="number" id="product-stock" value="0" required>
+                        </div>
+
+                        <div class="image-upload-section">
+                            <h3>Product Image</h3>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="product-image" accept="image/*" onchange="previewImage(event, 'add')">
+                                <label for="product-image" class="file-input-label">📁 Choose Image</label>
+                            </div>
+                            <div id="image-preview-add" class="image-preview"></div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submit-btn">Add Product</button>
+                    </form>
+                </div>
+
+                <div class="products-table">
+                    <h2>All Products</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-list">
+                            <!-- Products will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div id="orders-section" class="section">
+                <h2>Recent Orders</h2>
+                <div class="products-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-list">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Edit Modal -->
-    <div id="editModal" class="modal">
+    <!-- Edit Product Modal -->
+    <div id="edit-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Edit Product</h2>
+            <div class="modal-header">
+                <h2>Edit Product</h2>
+                <button class="close-btn" onclick="closeEditModal()">&times;</button>
+            </div>
             <form id="edit-product-form">
-                <input type="hidden" id="edit-id">
+                <input type="hidden" id="edit-product-id">
                 
                 <div class="form-group">
-                    <label>Product Image</label>
-                    <div class="image-upload-section">
-                        <input type="file" id="edit-product-image" accept="image/*">
-                        <label for="edit-product-image" class="upload-btn">Change Image</label>
-                        <img id="edit-image-preview" class="image-preview" alt="Preview">
-                    </div>
-                    <input type="hidden" id="edit-image_url">
+                    <label>Product Name *</label>
+                    <input type="text" id="edit-product-name" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-name">Product Name</label>
-                    <input type="text" id="edit-name" required>
+                    <label>Description</label>
+                    <textarea id="edit-product-description" rows="3"></textarea>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="edit-description">Description</label>
-                    <textarea id="edit-description" rows="3"></textarea>
+                    <label>Price (PKR) *</label>
+                    <input type="number" id="edit-product-price" step="0.01" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="edit-price">Price (PKR)</label>
-                    <input type="number" id="edit-price" step="0.01" min="0" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit-category">Category</label>
-                    <select id="edit-category" required>
+                    <label>Category *</label>
+                    <select id="edit-product-category" required>
+                        <option value="">Select a category</option>
                         <option value="jewellery">Jewellery</option>
                         <option value="cosmetics">Cosmetics</option>
                         <option value="skincare">Skincare</option>
                         <option value="clothes">Clothes</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="edit-stock_quantity">Stock Quantity</label>
-                    <input type="number" id="edit-stock_quantity" min="0" required>
+                    <label>Stock Quantity *</label>
+                    <input type="number" id="edit-product-stock" required>
                 </div>
-                
-                <button type="submit" class="btn btn-success">Update Product</button>
-                <button type="button" class="btn btn-danger" onclick="closeEditModal()">Cancel</button>
+
+                <div class="image-upload-section">
+                    <h3>Product Image</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="edit-product-image" accept="image/*" onchange="previewImage(event, 'edit')">
+                        <label for="edit-product-image" class="file-input-label">📁 Change Image</label>
+                    </div>
+                    <div id="image-preview-edit" class="image-preview"></div>
+                    <p style="font-size: 12px; color: #666; margin-top: 10px;">Leave empty to keep current image</p>
+                </div>
+
+                <button type="submit" class="submit-btn">Update Product</button>
             </form>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
-    </footer>
-
-    <script src="../js/main.js"></script>
     <script>
         const apiBaseUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:5000' 
             : window.location.origin;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('admin_token');
-            if (!token) {
-                window.location.href = 'admin-login.html';
-                return;
-            }
+        let selectedFile = null;
+        let editSelectedFile = null;
 
-            loadProducts();
+        // Check authentication
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
+            window.location.href = 'admin-login.html';
+        }
 
-            // Add product form
-            document.getElementById('product-form').addEventListener('submit', addProduct);
+        // Show/hide sections
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
             
-            // Edit product form
-            document.getElementById('edit-product-form').addEventListener('submit', updateProduct);
+            document.getElementById(`${section}-section`).classList.add('active');
+            event.target.classList.add('active');
 
-            // Image preview for add form
-            document.getElementById('product-image').addEventListener('change', function(e) {
-                previewImage(e.target, 'image-preview');
-            });
-
-            // Image preview for edit form
-            document.getElementById('edit-product-image').addEventListener('change', function(e) {
-                previewImage(e.target, 'edit-image-preview');
-            });
-
-            // Logout
-            document.getElementById('logout-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                localStorage.clear();
-                window.location.href = 'admin-login.html';
-            });
-
-            // Close modal
-            document.querySelector('.close').addEventListener('click', closeEditModal);
-        });
-
-        function previewImage(input, previewId) {
-            const preview = document.getElementById(previewId);
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.classList.add('show');
-                };
-                reader.readAsDataURL(input.files[0]);
+            if (section === 'products') {
+                loadProducts();
+            } else if (section === 'orders') {
+                loadOrders();
             }
         }
 
-        async function uploadImage(fileInput, type = 'products') {
-            const file = fileInput.files[0];
+        // Preview image before upload
+        function previewImage(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (type === 'add') {
+                selectedFile = file;
+            } else {
+                editSelectedFile = file;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewDiv = document.getElementById(`image-preview-${type}`);
+                previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                previewDiv.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Upload image to server
+        async function uploadImage(file) {
             if (!file) return null;
 
             const formData = new FormData();
             formData.append('image', file);
+            formData.append('type', 'product');
 
             try {
-                const response = await fetch(`${apiBaseUrl}/api/uploads?type=${type}`, {
+                const response = await fetch(`${apiBaseUrl}/api/uploads/product`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: formData
                 });
 
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error('Upload response:', text);
+                    throw new Error('Upload failed - check if backend route exists');
+                }
+
                 const data = await response.json();
-                if (data.error) throw new Error(data.error);
                 return data.imageUrl;
             } catch (error) {
                 console.error('Upload error:', error);
@@ -421,187 +502,294 @@
             }
         }
 
-        async function addProduct(e) {
+        // Add product
+        document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+
             try {
-                // Upload image first
-                const imageInput = document.getElementById('product-image');
                 let imageUrl = '';
                 
-                if (imageInput.files.length > 0) {
-                    imageUrl = await uploadImage(imageInput);
+                // Upload image if selected
+                if (selectedFile) {
+                    submitBtn.textContent = 'Uploading image...';
+                    imageUrl = await uploadImage(selectedFile);
                 }
 
+                // Create product
+                submitBtn.textContent = 'Creating product...';
                 const productData = {
-                    name: document.getElementById('name').value,
-                    description: document.getElementById('description').value,
-                    price: parseFloat(document.getElementById('price').value),
-                    category: document.getElementById('category').value,
+                    name: document.getElementById('product-name').value,
+                    description: document.getElementById('product-description').value,
+                    price: parseFloat(document.getElementById('product-price').value),
+                    category: document.getElementById('product-category').value,
                     image_url: imageUrl,
-                    stock_quantity: parseInt(document.getElementById('stock_quantity').value)
+                    stock_quantity: parseInt(document.getElementById('product-stock').value)
                 };
 
                 const response = await fetch(`${apiBaseUrl}/api/products`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(productData)
                 });
 
                 const data = await response.json();
-                if (data.error) throw new Error(data.error);
 
-                showNotification('Product added successfully!', 'success');
-                document.getElementById('product-form').reset();
-                document.getElementById('image-preview').classList.remove('show');
-                loadProducts();
+                if (response.ok) {
+                    showNotification('Product added successfully!', 'success');
+                    document.getElementById('add-product-form').reset();
+                    document.getElementById('image-preview-add').style.display = 'none';
+                    selectedFile = null;
+                    loadProducts();
+                } else {
+                    throw new Error(data.error || 'Failed to add product');
+                }
             } catch (error) {
-                showNotification(`Error: ${error.message}`, 'error');
+                console.error('Add product error:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Product';
+            }
+        });
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                const productsList = document.getElementById('products-list');
+
+                if (data.products && data.products.length > 0) {
+                    productsList.innerHTML = data.products.map(product => `
+                        <tr>
+                            <td>
+                                <img src="${product.image_url || '../images/placeholder-product.jpg'}" 
+                                     alt="${product.name}" 
+                                     class="product-image">
+                            </td>
+                            <td>${product.name}</td>
+                            <td>Rs ${product.price}</td>
+                            <td>${product.category}</td>
+                            <td>${product.stock_quantity || 0}</td>
+                            <td>
+                                <button class="action-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                                <button class="action-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    productsList.innerHTML = '<tr><td colspan="6" style="text-align:center">No products found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load products error:', error);
+                showNotification('Failed to load products', 'error');
             }
         }
 
-        function loadProducts() {
-            fetch(`${apiBaseUrl}/api/products`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById('products-list');
-                tbody.innerHTML = '';
-
-                data.products.forEach(product => {
-                    const row = document.createElement('tr');
-                    const imageSrc = product.image_url || '../images/placeholder-product.jpg';
-                    
-                    row.innerHTML = `
-                        <td><img src="${imageSrc}" class="product-image-thumb" alt="${product.name}"></td>
-                        <td>${product.name}</td>
-                        <td>${product.category}</td>
-                        <td>Rs ${parseFloat(product.price).toLocaleString('en-PK')}</td>
-                        <td>${product.stock_quantity}</td>
-                        <td>
-                            <button class="btn" onclick="editProduct(${product.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
+        // Edit product
+        async function editProduct(id) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/products/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
-            })
-            .catch(error => {
-                console.error('Error loading products:', error);
-            });
-        }
 
-        function editProduct(id) {
-            fetch(`${apiBaseUrl}/api/products/${id}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+                const data = await response.json();
                 const product = data.product;
-                
-                document.getElementById('edit-id').value = product.id;
-                document.getElementById('edit-name').value = product.name;
-                document.getElementById('edit-description').value = product.description || '';
-                document.getElementById('edit-price').value = product.price;
-                document.getElementById('edit-category').value = product.category;
-                document.getElementById('edit-image_url').value = product.image_url || '';
-                document.getElementById('edit-stock_quantity').value = product.stock_quantity;
-                
-                const preview = document.getElementById('edit-image-preview');
+
+                // Fill edit form
+                document.getElementById('edit-product-id').value = product.id;
+                document.getElementById('edit-product-name').value = product.name;
+                document.getElementById('edit-product-description').value = product.description || '';
+                document.getElementById('edit-product-price').value = product.price;
+                document.getElementById('edit-product-category').value = product.category;
+                document.getElementById('edit-product-stock').value = product.stock_quantity || 0;
+
+                // Show current image
                 if (product.image_url) {
-                    preview.src = product.image_url;
-                    preview.classList.add('show');
+                    const previewDiv = document.getElementById('image-preview-edit');
+                    previewDiv.innerHTML = `<img src="${product.image_url}" alt="Current image">`;
+                    previewDiv.style.display = 'block';
                 }
-                
-                document.getElementById('editModal').style.display = 'block';
-            })
-            .catch(error => {
-                showNotification('Error loading product', 'error');
-            });
+
+                // Show modal
+                document.getElementById('edit-modal').classList.add('active');
+            } catch (error) {
+                console.error('Edit product error:', error);
+                showNotification('Failed to load product details', 'error');
+            }
         }
 
-        async function updateProduct(e) {
+        // Update product
+        document.getElementById('edit-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const productId = document.getElementById('edit-product-id').value;
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+
             try {
-                const imageInput = document.getElementById('edit-product-image');
-                let imageUrl = document.getElementById('edit-image_url').value;
-                
-                if (imageInput.files.length > 0) {
-                    imageUrl = await uploadImage(imageInput);
+                let imageUrl = null;
+
+                // Upload new image if selected
+                if (editSelectedFile) {
+                    submitBtn.textContent = 'Uploading image...';
+                    imageUrl = await uploadImage(editSelectedFile);
                 }
 
+                // Update product
+                submitBtn.textContent = 'Updating product...';
                 const productData = {
-                    name: document.getElementById('edit-name').value,
-                    description: document.getElementById('edit-description').value,
-                    price: parseFloat(document.getElementById('edit-price').value),
-                    category: document.getElementById('edit-category').value,
-                    image_url: imageUrl,
-                    stock_quantity: parseInt(document.getElementById('edit-stock_quantity').value)
+                    name: document.getElementById('edit-product-name').value,
+                    description: document.getElementById('edit-product-description').value,
+                    price: parseFloat(document.getElementById('edit-product-price').value),
+                    category: document.getElementById('edit-product-category').value,
+                    stock_quantity: parseInt(document.getElementById('edit-product-stock').value)
                 };
 
-                const id = document.getElementById('edit-id').value;
-                const response = await fetch(`${apiBaseUrl}/api/products/${id}`, {
+                // Only include image_url if a new image was uploaded
+                if (imageUrl) {
+                    productData.image_url = imageUrl;
+                } else {
+                    // Keep the existing image
+                    const currentResponse = await fetch(`${apiBaseUrl}/api/products/${productId}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const currentData = await currentResponse.json();
+                    productData.image_url = currentData.product.image_url;
+                }
+
+                const response = await fetch(`${apiBaseUrl}/api/products/${productId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(productData)
                 });
 
                 const data = await response.json();
-                if (data.error) throw new Error(data.error);
 
-                showNotification('Product updated successfully!', 'success');
-                closeEditModal();
-                loadProducts();
+                if (response.ok) {
+                    showNotification('Product updated successfully!', 'success');
+                    closeEditModal();
+                    loadProducts();
+                } else {
+                    throw new Error(data.error || 'Failed to update product');
+                }
             } catch (error) {
-                showNotification(`Error: ${error.message}`, 'error');
+                console.error('Update product error:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Product';
+            }
+        });
+
+        // Delete product
+        async function deleteProduct(id) {
+            if (!confirm('Are you sure you want to delete this product?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/products/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showNotification('Product deleted successfully!', 'success');
+                    loadProducts();
+                } else {
+                    throw new Error(data.error || 'Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Delete product error:', error);
+                showNotification('Error: ' + error.message, 'error');
             }
         }
 
+        // Close edit modal
         function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('edit-modal').classList.remove('active');
+            document.getElementById('edit-product-form').reset();
+            document.getElementById('image-preview-edit').style.display = 'none';
+            editSelectedFile = null;
         }
 
-        function deleteProduct(id) {
-            if (!confirm('Are you sure you want to delete this product?')) return;
+        // Load orders
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/orders`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-            fetch(`${apiBaseUrl}/api/products/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                const data = await response.json();
+                const ordersList = document.getElementById('orders-list');
+
+                if (data.orders && data.orders.length > 0) {
+                    ordersList.innerHTML = data.orders.map(order => `
+                        <tr>
+                            <td>#${order.id}</td>
+                            <td>${order.customer_name}</td>
+                            <td>Rs ${order.total_amount}</td>
+                            <td>${order.status || 'Pending'}</td>
+                            <td>${new Date(order.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    ordersList.innerHTML = '<tr><td colspan="5" style="text-align:center">No orders found</td></tr>';
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) throw new Error(data.error);
-                showNotification('Product deleted successfully!', 'success');
-                loadProducts();
-            })
-            .catch(error => {
-                showNotification(`Error: ${error.message}`, 'error');
-            });
+            } catch (error) {
+                console.error('Load orders error:', error);
+                showNotification('Failed to load orders', 'error');
+            }
         }
 
+        // Show notification
         function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
+            const notification = document.createElement('div');
             notification.className = `notification ${type}`;
-            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
             setTimeout(() => {
-                notification.className = 'notification';
+                notification.remove();
             }, 3000);
         }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('deviceAuthorized');
+            window.location.href = 'admin-login.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
     </script>
 </body>
 </html>
