@@ -6,23 +6,32 @@
     <title>Cosmetics - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        .category-header {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        
         .empty-products {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 60px 20px;
             color: #666;
+            font-size: 18px;
         }
-        
-        .products {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
+
+        .product-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .in-stock {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .out-of-stock {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -59,12 +68,9 @@
 
         <section class="products">
             <div class="products-container" id="products-container">
-                <!-- Products will be loaded here -->
-            </div>
-            
-            <div class="empty-products" id="empty-message" style="display: none;">
-                <h3>No products available yet</h3>
-                <p>Please check back soon or contact us for more information.</p>
+                <div class="empty-products">
+                    <p>Loading products...</p>
+                </div>
             </div>
         </section>
     </main>
@@ -75,21 +81,21 @@
 
     <script src="../js/main.js"></script>
     <script>
-        const apiBaseUrl = window.location.hostname === 'localhost' 
-            ? 'http://localhost:5000' 
-            : window.location.origin;
+        const apiBaseUrl = window.location.origin;
+        const categoryName = 'cosmetics';
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
             loadProducts();
             updateCartCount();
         });
 
         async function loadProducts() {
+            const productsContainer = document.getElementById('products-container');
+            
             try {
-                const url = `${apiBaseUrl}/api/products?category=cosmetics`;
-                console.log('Fetching from:', url);
+                console.log('Fetching from:', `${apiBaseUrl}/api/products?category=${categoryName}`);
                 
-                const response = await fetch(url);
+                const response = await fetch(`${apiBaseUrl}/api/products?category=${categoryName}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -98,83 +104,54 @@
                 const data = await response.json();
                 console.log('Products data:', data);
                 
-                const container = document.getElementById('products-container');
-                const emptyMessage = document.getElementById('empty-message');
+                const products = data.products || [];
                 
-                if (data.products && data.products.length > 0) {
-                    container.innerHTML = '';
-                    emptyMessage.style.display = 'none';
-                    
-                    data.products.forEach(product => {
-                        const productCard = document.createElement('div');
-                        productCard.className = 'product-card';
-                        
-                        const imageSrc = product.image_url || '../images/placeholder-product.jpg';
-                        
-                        productCard.innerHTML = `
-                            <img src="${imageSrc}" alt="${product.name}">
+                if (products.length > 0) {
+                    productsContainer.innerHTML = products.map(product => `
+                        <div class="product-card" onclick="viewProduct(${product.id})" style="cursor: pointer;">
+                            <img src="${product.image_url || '../images/placeholder-product.jpg'}" 
+                                 alt="${product.name}" 
+                                 class="product-image">
                             <div class="product-info">
-                                <h3>${product.name}</h3>
-                                <p class="price">Rs ${parseFloat(product.price).toLocaleString('en-PK')}</p>
-                                <button class="add-to-cart-btn" 
-                                    data-product-id="${product.id}" 
-                                    data-product-name="${product.name}" 
-                                    data-product-price="${product.price}">
-                                    Add to Cart
-                                </button>
+                                <h3 class="product-name">${product.name}</h3>
+                                <p class="product-price">Rs ${product.price.toFixed(2)}</p>
+                                ${product.stock_quantity <= 0 ? 
+                                    '<p class="out-of-stock">Out of Stock</p>' : 
+                                    '<p class="in-stock">In Stock</p>'}
                             </div>
-                        `;
-                        container.appendChild(productCard);
-                    });
-                    
-                    initializeAddToCart();
+                        </div>
+                    `).join('');
                 } else {
-                    emptyMessage.style.display = 'block';
-                    container.innerHTML = '';
+                    productsContainer.innerHTML = '<div class="empty-products"><p>No products available yet in this category.</p></div>';
                 }
             } catch (error) {
                 console.error('Error loading products:', error);
-                document.getElementById('empty-message').style.display = 'block';
+                productsContainer.innerHTML = '<div class="empty-products"><p>Failed to load products. Please try again later.</p></div>';
             }
         }
 
-        function initializeAddToCart() {
-            const buttons = document.querySelectorAll('.add-to-cart-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const productId = this.getAttribute('data-product-id');
-                    const productName = this.getAttribute('data-product-name');
-                    const productPrice = parseFloat(this.getAttribute('data-product-price'));
-                    
-                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                    const existingItem = cart.find(item => item.id === productId);
-                    
-                    if (existingItem) {
-                        existingItem.quantity += 1;
-                    } else {
-                        cart.push({
-                            id: productId,
-                            name: productName,
-                            price: productPrice,
-                            quantity: 1
-                        });
-                    }
-                    
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    updateCartCount();
-                    
-                    alert(`${productName} added to cart!`);
-                });
-            });
+        function viewProduct(productId) {
+            window.location.href = `product-detail.html?id=${productId}&category=cosmetics`;
         }
 
         function updateCartCount() {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const count = cart.reduce((total, item) => total + item.quantity, 0);
-            const cartCountEl = document.getElementById('cart-count');
-            if (cartCountEl) {
-                cartCountEl.textContent = count;
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = count;
             }
+        }
+
+        // Mobile menu toggle
+        const hamburger = document.querySelector('#hamburger');
+        const navMenu = document.querySelector('#nav-menu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
         }
     </script>
 </body>
