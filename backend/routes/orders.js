@@ -152,4 +152,90 @@ router.delete('/:id', authenticateToken, authorizeAdmin, (req, res) => {
     });
 });
 
+// Send order confirmation email
+router.post('/:id/confirm-email', authenticateToken, authorizeAdmin, (req, res) => {
+    const orderId = req.params.id;
+    const { customerEmail, customerName } = req.body;
+
+    // Get order details
+    db.get('SELECT * FROM orders WHERE id = ?', [orderId], (err, order) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (!order) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        // Parse order items
+        const orderItems = JSON.parse(order.order_items);
+
+        // Create order tracking URL
+        const trackingUrl = `${process.env.APP_URL || 'https://nayab-webstore-production.up.railway.app'}/pages/track-order.html?id=${orderId}&email=${encodeURIComponent(customerEmail)}`;
+
+        // Email content (you'll need to set up email service like SendGrid, Mailgun, or NodeMailer)
+        const emailContent = {
+            to: customerEmail,
+            subject: `Order Confirmed #${orderId} - NAYAB WEBSTORE`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #28a745;">✓ Order Confirmed!</h2>
+                    <p>Dear ${customerName},</p>
+                    <p>Thank you for your order! Your order #${orderId} has been confirmed and will be processed shortly.</p>
+                    
+                    <h3>Order Details:</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; text-align: left;">Product</th>
+                                <th style="padding: 10px; text-align: center;">Qty</th>
+                                <th style="padding: 10px; text-align: right;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${orderItems.map(item => `
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
+                                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #eee;">${item.quantity}</td>
+                                    <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee;">Rs ${(item.price * item.quantity).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <p style="margin-top: 20px;"><strong>Delivery Charges:</strong> Rs ${order.delivery_charges || 0}</p>
+                    <h3 style="color: #28a745;">Total: Rs ${order.total_amount}</h3>
+                    
+                    <p><strong>Shipping Address:</strong><br>${order.shipping_address}</p>
+                    
+                    <div style="margin: 30px 0;">
+                        <a href="${trackingUrl}" 
+                           style="display: inline-block; padding: 15px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                            Track Your Order
+                        </a>
+                    </div>
+                    
+                    <p>If you have any questions, please contact us.</p>
+                    <p>Thank you for shopping with NAYAB WEBSTORE!</p>
+                    
+                    <hr style="margin: 30px 0;">
+                    <p style="color: #666; font-size: 12px;">© 2025 NAYAB WEBSTORE. All rights reserved.</p>
+                </div>
+            `
+        };
+
+        // For now, just log the email content (you'll need to integrate an email service)
+        console.log('📧 Email to send:', emailContent);
+        console.log('📦 Tracking URL:', trackingUrl);
+
+        // TODO: Integrate with email service
+        // Example with nodemailer or SendGrid would go here
+
+        res.json({ 
+            message: 'Confirmation email sent',
+            trackingUrl: trackingUrl,
+            note: 'Email service not configured yet - check server logs for email content'
+        });
+    });
+});
+
 module.exports = router;

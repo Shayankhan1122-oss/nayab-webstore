@@ -865,7 +865,7 @@
                     <div style="padding: 20px;">
                         <h3>Order #${order.id}</h3>
                         <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
-                        <p><strong>Status:</strong> ${order.status || 'Pending'}</p>
+                        <p><strong>Status:</strong> <span id="order-status-display">${order.status || 'Pending'}</span></p>
                         <hr>
                         
                         <h4>Customer Information</h4>
@@ -905,6 +905,19 @@
                         <p><strong>Subtotal:</strong> Rs ${order.subtotal || (order.total_amount - (order.delivery_charges || 0))}</p>
                         <p><strong>Delivery Charges:</strong> Rs ${order.delivery_charges || 0}</p>
                         <h3 style="margin-top: 10px;"><strong>Total Amount:</strong> Rs ${order.total_amount}</h3>
+                        <hr>
+                        
+                        <div style="margin-top: 20px;">
+                            ${order.status === 'pending' || !order.status ? `
+                                <button onclick="confirmOrder(${order.id}, '${order.customer_email}', '${order.customer_name}')" 
+                                        class="submit-btn" 
+                                        style="width: 100%; background: #28a745;">
+                                    ✓ Confirm Order & Send Email
+                                </button>
+                            ` : `
+                                <p style="color: #28a745; font-weight: bold; text-align: center;">✓ Order Confirmed</p>
+                            `}
+                        </div>
                     </div>
                 `;
 
@@ -920,6 +933,64 @@
         // Close order modal
         function closeOrderModal() {
             document.getElementById('order-modal').classList.remove('active');
+        }
+
+        // Confirm order and send email
+        async function confirmOrder(orderId, customerEmail, customerName) {
+            if (!confirm('Confirm this order and send confirmation email to customer?')) {
+                return;
+            }
+
+            try {
+                // Update order status to confirmed
+                const response = await fetch(`${apiBaseUrl}/api/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'confirmed' })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update order status');
+                }
+
+                // Send confirmation email
+                const emailResponse = await fetch(`${apiBaseUrl}/api/orders/${orderId}/confirm-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        customerEmail,
+                        customerName,
+                        orderId
+                    })
+                });
+
+                if (emailResponse.ok) {
+                    showNotification('Order confirmed! Confirmation email sent to customer.', 'success');
+                    
+                    // Update the display
+                    document.getElementById('order-status-display').textContent = 'Confirmed';
+                    
+                    // Reload orders list
+                    loadOrders();
+                    
+                    // Close modal after 2 seconds
+                    setTimeout(() => {
+                        closeOrderModal();
+                    }, 2000);
+                } else {
+                    showNotification('Order confirmed but email failed to send.', 'error');
+                }
+
+            } catch (error) {
+                console.error('Confirm order error:', error);
+                showNotification('Failed to confirm order: ' + error.message, 'error');
+            }
         }
 
         // Show notification
