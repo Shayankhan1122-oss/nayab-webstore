@@ -175,7 +175,7 @@ router.post('/:id/confirm-email', authenticateToken, authorizeAdmin, (req, res) 
         // Email content (you'll need to set up email service like SendGrid, Mailgun, or NodeMailer)
         const emailContent = {
             to: customerEmail,
-            subject: `Order Confirmed #${orderId} - NAYAB WEBSTORE`,
+            subject: `Order Confirmed #${orderId} - BLOOME BY NAYAB`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #28a745;">✓ Order Confirmed!</h2>
@@ -215,10 +215,10 @@ router.post('/:id/confirm-email', authenticateToken, authorizeAdmin, (req, res) 
                     </div>
                     
                     <p>If you have any questions, please contact us.</p>
-                    <p>Thank you for shopping with NAYAB WEBSTORE!</p>
+                    <p>Thank you for shopping with BLOOME BY NAYAB!</p>
                     
                     <hr style="margin: 30px 0;">
-                    <p style="color: #666; font-size: 12px;">© 2025 NAYAB WEBSTORE. All rights reserved.</p>
+                    <p style="color: #666; font-size: 12px;">© 2025 BLOOME BY NAYAB. All rights reserved.</p>
                 </div>
             `
         };

@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAYAB WEBSTORE - Premium Shopping Experience</title>
+    <title>BLOOME BY NAYAB - Premium Shopping Experience</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Logo styling */
+        .nav-logo img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
         /* Category logo styling */
         .card-image {
             width: 100%;
@@ -37,6 +44,10 @@
 
         /* Mobile responsive - 2 categories per row on mobile */
         @media (max-width: 768px) {
+            .nav-logo img {
+                height: 35px;
+            }
+
             .category-grid {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 15px !important;
@@ -65,7 +76,9 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <a href="index.html">NAYAB WEBSTORE</a>
+                    <a href="index.html">
+                        <img src="images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
+                    </a>
                 </div>
                 <div class="nav-menu" id="nav-menu">
                     <a href="index.html" class="nav-link">Home</a>
@@ -88,8 +101,8 @@
     <main>
         <section class="hero">
             <div class="hero-content">
-                <h1>Welcome to NAYAB WEBSTORE</h1>
-                <p>Discover premium products curated just for you</p>
+                <h1>Welcome to BLOOME BY NAYAB</h1>
+                <p>Nature's Touch, Nayab's Magic</p>
             </div>
         </section>
 
@@ -144,7 +157,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 NAYAB WEBSTORE. All rights reserved.</p>
+        <p>&copy; 2025 BLOOME BY NAYAB. All rights reserved.</p>
     </footer>
 
     <script src="js/main.js"></script>

@@ -1,7 +1,7 @@
 {
   "name": "nayab-webstore-backend",
   "version": "1.0.0",
-  "description": "Backend for NAYAB WEBSTORE",
+  "description": "Backend for BLOOME BY NAYAB",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -29,6 +29,6 @@
     "ecommerce",
     "backend"
   ],
-  "author": "NAYAB WEBSTORE",
+  "author": "BLOOME BY NAYAB",
   "license": "MIT"
 }
