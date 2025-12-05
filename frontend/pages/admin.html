@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - BLOOME BY NAYAB</title>
+    <title>Admin Dashboard - NAYAB WEBSTORE</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         .admin-container {
@@ -309,11 +309,9 @@
     <header>
         <nav class="navbar">
             <div class="nav-container">
-               <div class="nav-logo">
-    <a href="../index.html">
-        <img src="../images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
-    </a>
-</div>
+                <div class="nav-logo">
+                    <a href="../index.html">NAYAB WEBSTORE</a>
+                </div>
                 <div class="nav-menu">
                     <a href="../index.html" class="nav-link">View Store</a>
                 </div>
@@ -944,21 +942,40 @@
             }
 
             try {
-                // Update order status to confirmed
-                const response = await fetch(`${apiBaseUrl}/api/orders/${orderId}`, {
-                    method: 'PUT',
+                // First check if status column exists by trying to get the order
+                const checkResponse = await fetch(`${apiBaseUrl}/api/orders/${orderId}`, {
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ status: 'confirmed' })
+                    }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to update order status');
+                if (!checkResponse.ok) {
+                    throw new Error('Failed to fetch order details');
                 }
 
-                // Send confirmation email
+                const orderData = await checkResponse.json();
+                console.log('Order data:', orderData);
+
+                // Try to update order status
+                try {
+                    const statusResponse = await fetch(`${apiBaseUrl}/api/orders/${orderId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ status: 'confirmed' })
+                    });
+
+                    if (!statusResponse.ok) {
+                        console.warn('Status update failed, but continuing with email...');
+                    }
+                } catch (statusError) {
+                    console.warn('Status update error:', statusError);
+                    // Continue anyway - email is more important
+                }
+
+                // Send confirmation email regardless of status update
                 const emailResponse = await fetch(`${apiBaseUrl}/api/orders/${orderId}/confirm-email`, {
                     method: 'POST',
                     headers: {
@@ -972,26 +989,36 @@
                     })
                 });
 
+                const emailData = await emailResponse.json();
+
                 if (emailResponse.ok) {
-                    showNotification('Order confirmed! Confirmation email sent to customer.', 'success');
+                    showNotification('Order confirmed! Check Railway logs for email details and tracking URL.', 'success');
+                    console.log('📧 Email details:', emailData);
+                    console.log('📦 Tracking URL:', emailData.trackingUrl);
                     
                     // Update the display
-                    document.getElementById('order-status-display').textContent = 'Confirmed';
+                    const statusDisplay = document.getElementById('order-status-display');
+                    if (statusDisplay) {
+                        statusDisplay.textContent = 'Confirmed';
+                    }
                     
                     // Reload orders list
                     loadOrders();
                     
-                    // Close modal after 2 seconds
+                    // Show tracking URL to admin
+                    alert(`Order confirmed!\n\nTracking URL for customer:\n${emailData.trackingUrl}\n\nCheck Railway logs for full email content.`);
+                    
+                    // Close modal after showing alert
                     setTimeout(() => {
                         closeOrderModal();
-                    }, 2000);
+                    }, 1000);
                 } else {
-                    showNotification('Order confirmed but email failed to send.', 'error');
+                    throw new Error(emailData.error || 'Failed to send confirmation email');
                 }
 
             } catch (error) {
                 console.error('Confirm order error:', error);
-                showNotification('Failed to confirm order: ' + error.message, 'error');
+                showNotification('Error: ' + error.message, 'error');
             }
         }
 

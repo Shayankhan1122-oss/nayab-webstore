@@ -18,6 +18,23 @@ const orderRoutes = require('./routes/orders');
 const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/uploads');
 
+// ADD DATABASE MIGRATION HERE ↓
+const { db } = require('./config/db');
+
+// Auto-run migration on startup (adds status column if missing)
+db.run('ALTER TABLE orders ADD COLUMN status TEXT DEFAULT "pending"', (err) => {
+    if (err) {
+        if (err.message.includes('duplicate column')) {
+            console.log('✅ Status column already exists');
+        } else {
+            console.warn('⚠️ Migration warning:', err.message);
+        }
+    } else {
+        console.log('✅ Status column added to orders table');
+    }
+});
+// MIGRATION CODE ENDS HERE ↑
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
