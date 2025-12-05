@@ -116,7 +116,7 @@ router.put('/:id', authenticateToken, authorizeAdmin, (req, res) => {
         return res.status(400).json({ error: 'Status is required' });
     }
 
-    const validStatuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const validStatuses = ['pending','confirmed','processing', 'shipped', 'delivered', 'cancelled'];
     if (!validStatuses.includes(status)) {
         return res.status(400).json({ error: 'Invalid status' });
     }
