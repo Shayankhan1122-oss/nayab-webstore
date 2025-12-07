@@ -302,10 +302,32 @@
         const API_URL = 'https://nayab-webstore-production.up.railway.app/api';
         let selectedImages = [];
 
-        // Check if logged in
+        // Check if logged in and verify token
         const token = localStorage.getItem('adminToken');
         if (!token) {
+            console.log('No token found, redirecting to login');
             window.location.href = 'admin-login.html';
+        } else {
+            // Verify token is valid by making a test API call
+            verifyToken();
+        }
+
+        async function verifyToken() {
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.log('Token verification failed, clearing token');
+                    localStorage.removeItem('adminToken');
+                    window.location.href = 'admin-login.html';
+                }
+            } catch (error) {
+                console.error('Token verification error:', error);
+            }
         }
 
         // Handle multiple image selection
