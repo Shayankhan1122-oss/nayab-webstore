@@ -6,129 +6,209 @@
     <title>Cosmetics - BLOOME BY NAYAB</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        .empty-products {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-            font-size: 18px;
+        /* Product Grid - 4 products per row on mobile */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 on tablet */
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 on desktop */
+                gap: 25px;
+            }
         }
 
         .product-card {
-            transition: transform 0.3s, box-shadow 0.3s;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Fixed image container - no zoom/crop */
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1/1; /* Square container */
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* FIT the entire image, no cropping */
+            padding: 10px; /* Add padding so image doesn't touch edges */
+        }
+
+        .product-info {
+            padding: 12px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .product-price {
+            font-size: 16px;
+            color: #e91e63;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .stock-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
         }
 
         .in-stock {
-            color: #28a745;
-            font-weight: bold;
-            font-size: 14px;
+            background: #d4edda;
+            color: #155724;
         }
 
         .out-of-stock {
-            color: #dc3545;
-            font-weight: bold;
-            font-size: 14px;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Page header */
+        .category-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .category-header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* No products message */
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-products h2 {
+            color: #999;
+            font-size: 1.5rem;
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="nav-container">
-               <div class="nav-logo">
-    <a href="../index.html">
-        <img src="../images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
-    </a>
-</div>
-                <div class="nav-menu" id="nav-menu">
-                    <a href="../index.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">About</a>
-                    <a href="cart.html" class="nav-link cart-icon">
-                        <span>Cart</span>
-                        <span class="cart-count" id="cart-count">0</span>
-                    </a>
-                    <a href="admin-login.html" class="nav-link">Admin Login</a>
-                </div>
-                <div class="hamburger" id="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
+                </a>
             </div>
-        </nav>
-    </header>
-
-    <main>
-        <section class="category-header">
-            <h1>Cosmetics</h1>
-            <p>Explore our premium cosmetics collection</p>
-        </section>
-
-        <section class="products">
-            <div class="products-container" id="products-container">
-                <div class="empty-products">
-                    <p>Loading products...</p>
-                </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+                <li><a href="cosmetics.html" class="active">Cosmetics</a></li>
+                <li><a href="skincare.html">Skincare</a></li>
+                <li><a href="clothes.html">Clothes</a></li>
+                <li><a href="cart.html">🛒 Cart</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
-        </section>
-    </main>
+        </div>
+    </nav>
 
-    <footer>
-        <p>&copy; 2025 BLOOME BY NAYAB. All rights reserved.</p>
-    </footer>
+    <!-- Category Header -->
+    <div class="category-header">
+        <h1>💄 Cosmetics</h1>
+        <p>Beauty essentials for every look</p>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="productsGrid">
+        <!-- Products will be loaded here -->
+    </div>
+
+    <!-- No Products Message -->
+    <div class="no-products" id="noProducts" style="display: none;">
+        <h2>No products available</h2>
+        <p>Check back soon for new arrivals!</p>
+    </div>
 
     <script src="../js/main.js"></script>
     <script>
-        const apiBaseUrl = window.location.origin;
-        const categoryName = 'cosmetics';
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProducts();
-            updateCartCount();
-        });
+        const API_URL = 'https://nayab-webstore-production.up.railway.app/api';
 
         async function loadProducts() {
-            const productsContainer = document.getElementById('products-container');
-            
             try {
-                console.log('Fetching from:', `${apiBaseUrl}/api/products?category=${categoryName}`);
-                
-                const response = await fetch(`${apiBaseUrl}/api/products?category=${categoryName}`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
+                const response = await fetch(`${API_URL}/products`);
                 const data = await response.json();
-                console.log('Products data:', data);
                 
-                const products = data.products || [];
+                // Filter products by category
+                const categoryProducts = data.products.filter(p => p.category === 'cosmetics');
                 
-                if (products.length > 0) {
-                    productsContainer.innerHTML = products.map(product => `
-                        <div class="product-card" onclick="viewProduct(${product.id})" style="cursor: pointer;">
-                            <img src="${product.image_url || '../images/placeholder-product.jpg'}" 
-                                 alt="${product.name}" 
-                                 class="product-image">
-                            <div class="product-info">
-                                <h3 class="product-name">${product.name}</h3>
-                                <p class="product-price">Rs ${product.price.toFixed(2)}</p>
-                                ${product.stock_quantity <= 0 ? 
-                                    '<p class="out-of-stock">Out of Stock</p>' : 
-                                    '<p class="in-stock">In Stock</p>'}
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    productsContainer.innerHTML = '<div class="empty-products"><p>No products available yet in this category.</p></div>';
+                const grid = document.getElementById('productsGrid');
+                const noProducts = document.getElementById('noProducts');
+                
+                if (categoryProducts.length === 0) {
+                    grid.style.display = 'none';
+                    noProducts.style.display = 'block';
+                    return;
                 }
+                
+                grid.innerHTML = categoryProducts.map(product => `
+                    <div class="product-card" onclick="viewProduct(${product.id})">
+                        <div class="product-image">
+                            <img src="${API_URL}${product.image_url}" alt="${product.name}" onerror="this.src='../images/placeholder.png'">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">Rs ${product.price}</div>
+                            <span class="stock-status ${product.stock > 0 ? 'in-stock' : 'out-of-stock'}">
+                                ${product.stock > 0 ? '✓ In Stock' : '✗ Out of Stock'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+                
             } catch (error) {
                 console.error('Error loading products:', error);
-                productsContainer.innerHTML = '<div class="empty-products"><p>Failed to load products. Please try again later.</p></div>';
+                document.getElementById('productsGrid').innerHTML = 
+                    '<p style="text-align: center; padding: 40px; color: #999;">Failed to load products</p>';
             }
         }
 
@@ -136,16 +216,8 @@
             window.location.href = `product-detail.html?id=${productId}&category=cosmetics`;
         }
 
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const count = cart.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = count;
-            }
-        }
-
-      
+        // Load products on page load
+        loadProducts();
     </script>
 </body>
 </html>

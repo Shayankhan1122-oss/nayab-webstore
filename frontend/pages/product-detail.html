@@ -10,57 +10,62 @@
             max-width: 1200px;
             margin: 40px auto;
             padding: 20px;
-        }
-
-        .product-detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
+        /* Image Gallery */
         .product-images {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        .main-image {
+        .main-image-container {
             width: 100%;
-            height: 500px;
-            border-radius: 10px;
+            aspect-ratio: 1/1;
+            border: 2px solid #ddd;
+            border-radius: 12px;
             overflow: hidden;
-            border: 1px solid #eee;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .main-image img {
+        .main-image-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* Show full image without cropping */
+            padding: 20px;
         }
 
-        .thumbnail-images {
-            display: flex;
+        /* Thumbnail gallery */
+        .thumbnail-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 10px;
-            overflow-x: auto;
         }
 
         .thumbnail {
-            width: 80px;
-            height: 80px;
-            border-radius: 5px;
+            aspect-ratio: 1/1;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             overflow: hidden;
             cursor: pointer;
-            border: 2px solid transparent;
             transition: all 0.3s;
+            background: #f9f9f9;
         }
 
-        .thumbnail:hover,
+        .thumbnail:hover {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+
         .thumbnail.active {
-            border-color: #007bff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px #667eea;
         }
 
         .thumbnail img {
@@ -69,6 +74,7 @@
             object-fit: cover;
         }
 
+        /* Product Info */
         .product-info {
             display: flex;
             flex-direction: column;
@@ -76,472 +82,381 @@
         }
 
         .product-title {
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 700;
             color: #333;
+            margin: 0;
         }
 
         .product-price {
-            font-size: 28px;
-            color: #28a745;
+            font-size: 2rem;
+            color: #e91e63;
             font-weight: bold;
         }
 
         .product-category {
             display: inline-block;
-            padding: 5px 15px;
-            background: #f0f0f0;
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
-            color: #666;
             text-transform: capitalize;
+        }
+
+        .stock-status {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .in-stock {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .out-of-stock {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .product-description {
             line-height: 1.8;
             color: #555;
-            font-size: 16px;
-        }
-
-        .stock-info {
-            padding: 10px;
-            background: #e7f3ff;
-            border-radius: 5px;
-            color: #004085;
-        }
-
-        .stock-info.out-of-stock {
-            background: #f8d7da;
-            color: #721c24;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
         }
 
         .quantity-selector {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin: 20px 0;
         }
 
-        .quantity-selector label {
-            font-weight: bold;
-        }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .quantity-btn {
-            width: 35px;
-            height: 35px;
-            border: 1px solid #ddd;
+        .quantity-selector button {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #667eea;
             background: white;
-            border-radius: 5px;
+            color: #667eea;
+            font-size: 20px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 18px;
             transition: all 0.3s;
         }
 
-        .quantity-btn:hover {
-            background: #007bff;
+        .quantity-selector button:hover {
+            background: #667eea;
             color: white;
-            border-color: #007bff;
         }
 
-        .quantity-display {
-            width: 50px;
+        .quantity-selector input {
+            width: 60px;
+            height: 40px;
             text-align: center;
-            font-size: 18px;
-            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .action-buttons {
             display: flex;
-            flex-direction: column;
             gap: 15px;
             margin-top: 20px;
         }
 
-        .btn-primary,
-        .btn-secondary {
-            padding: 15px 30px;
+        .btn {
+            flex: 1;
+            padding: 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            text-align: center;
         }
 
         .btn-primary {
-            background: #28a745;
+            background: #667eea;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #218838;
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-secondary {
-            background: #007bff;
+        .btn-success {
+            background: #28a745;
             color: white;
         }
 
-        .btn-secondary:hover {
-            background: #0056b3;
-        }
-
-        .btn-disabled {
-            background: #ccc;
-            cursor: not-allowed;
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
         }
 
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
-            color: #007bff;
+            color: #667eea;
             text-decoration: none;
-            font-size: 16px;
+            font-weight: 600;
         }
 
         .back-link:hover {
             text-decoration: underline;
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
-            z-index: 1000;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .notification.success {
-            background: #28a745;
-        }
-
-        .notification.error {
-            background: #dc3545;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
+        /* Mobile responsive */
         @media (max-width: 768px) {
-            .product-detail-grid {
+            .product-detail-container {
                 grid-template-columns: 1fr;
-                padding: 20px;
-            }
-
-            .main-image {
-                height: 300px;
+                gap: 20px;
+                padding: 15px;
             }
 
             .product-title {
-                font-size: 24px;
+                font-size: 1.5rem;
             }
 
             .product-price {
-                font-size: 22px;
+                font-size: 1.5rem;
             }
 
             .action-buttons {
-                position: sticky;
-                bottom: 0;
-                background: white;
-                padding: 15px;
-                margin: 0 -20px;
-                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                flex-direction: column;
+            }
+
+            .thumbnail-gallery {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-logo">
-    <a href="../index.html">
-        <img src="../images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
-    </a>
-</div>
-                <div class="nav-menu" id="nav-menu">
-                    <a href="../index.html" class="nav-link">Home</a>
-                    <a href="#" class="nav-link">About</a>
-                    <a href="cart.html" class="nav-link cart-icon">
-                        <span>Cart</span>
-                        <span class="cart-count" id="cart-count">0</span>
-                    </a>
-                    <a href="admin-login.html" class="nav-link">Admin Login</a>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../index.html">
+                    <img src="../images/logo.png" alt="BLOOME BY NAYAB" style="height: 50px; width: auto;">
+                </a>
+            </div>
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="jewellery.html">Jewellery</a></li>
+                <li><a href="cosmetics.html">Cosmetics</a></li>
+                <li><a href="skincare.html">Skincare</a></li>
+                <li><a href="clothes.html">Clothes</a></li>
+                <li><a href="cart.html">🛒 Cart</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+        <a href="#" class="back-link" id="backLink">← Back to Products</a>
+        
+        <div class="product-detail-container">
+            <!-- Product Images Gallery -->
+            <div class="product-images">
+                <div class="main-image-container">
+                    <img id="mainImage" src="" alt="Product Image">
                 </div>
-                <div class="hamburger" id="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+                <div class="thumbnail-gallery" id="thumbnailGallery">
+                    <!-- Thumbnails will be added here -->
                 </div>
             </div>
-        </nav>
-    </header>
 
-    <main>
-        <div class="product-detail-container">
-            <a href="#" class="back-link" id="back-link">← Back to Products</a>
-            
-            <div class="product-detail-grid">
-                <div class="product-images">
-                    <div class="main-image" id="main-image">
-                        <img src="../images/placeholder-product.jpg" alt="Product">
-                    </div>
-                    <div class="thumbnail-images" id="thumbnail-images">
-                        <!-- Thumbnails will be loaded here -->
-                    </div>
+            <!-- Product Information -->
+            <div class="product-info">
+                <span class="product-category" id="productCategory"></span>
+                <h1 class="product-title" id="productName"></h1>
+                <div class="product-price" id="productPrice"></div>
+                <span class="stock-status" id="stockStatus"></span>
+
+                <div class="product-description">
+                    <h3>Description</h3>
+                    <p id="productDescription"></p>
                 </div>
 
-                <div class="product-info">
-                    <span class="product-category" id="product-category">Loading...</span>
-                    <h1 class="product-title" id="product-title">Loading...</h1>
-                    <div class="product-price" id="product-price">Rs 0.00</div>
-                    
-                    <div class="stock-info" id="stock-info">
-                        <strong>In Stock:</strong> <span id="stock-quantity">0</span> units available
-                    </div>
+                <div class="quantity-selector">
+                    <label style="font-weight: 600;">Quantity:</label>
+                    <button onclick="decreaseQuantity()">-</button>
+                    <input type="number" id="quantity" value="1" min="1" readonly>
+                    <button onclick="increaseQuantity()">+</button>
+                </div>
 
-                    <div class="product-description" id="product-description">
-                        Loading product details...
-                    </div>
-
-                    <div class="quantity-selector">
-                        <label>Quantity:</label>
-                        <div class="quantity-controls">
-                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
-                            <span class="quantity-display" id="quantity">1</span>
-                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="btn-primary" id="order-now-btn" onclick="orderNow()">
-                            Order Now
-                        </button>
-                        <button class="btn-secondary" id="add-to-cart-btn" onclick="addToCart()">
-                            Add to Cart
-                        </button>
-                    </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="addToCart()">
+                        🛒 Add to Cart
+                    </button>
+                    <button class="btn btn-success" onclick="orderNow()">
+                        ⚡ Order Now
+                    </button>
                 </div>
             </div>
         </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 BLOOME BY NAYAB. All rights reserved.</p>
-    </footer>
+    </div>
 
     <script src="../js/main.js"></script>
     <script>
-        const apiBaseUrl = window.location.hostname === 'localhost' 
-            ? 'http://localhost:5000' 
-            : window.location.origin;
-
+        const API_URL = 'https://nayab-webstore-production.up.railway.app/api';
         let currentProduct = null;
-        let currentQuantity = 1;
+        let productImages = [];
         let currentImageIndex = 0;
 
         // Get product ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
-        const returnCategory = urlParams.get('category');
+        const category = urlParams.get('category');
+
+        // Set back link
+        document.getElementById('backLink').href = `${category}.html`;
 
         // Load product details
-        async function loadProductDetails() {
-            if (!productId) {
-                showNotification('Product not found', 'error');
-                window.location.href = '../index.html';
-                return;
-            }
-
+        async function loadProduct() {
             try {
-                const response = await fetch(`${apiBaseUrl}/api/products/${productId}`);
+                const response = await fetch(`${API_URL}/products/${productId}`);
                 const data = await response.json();
+                currentProduct = data.product;
 
-                if (data.product) {
-                    currentProduct = data.product;
-                    displayProduct(currentProduct);
-                    
-                    // Update back link
-                    const backLink = document.getElementById('back-link');
-                    if (returnCategory) {
-                        backLink.href = `${returnCategory}.html`;
-                        backLink.textContent = `← Back to ${returnCategory.charAt(0).toUpperCase() + returnCategory.slice(1)}`;
-                    } else {
-                        backLink.href = '../index.html';
-                    }
+                // Get images array - either from images field or use main image
+                productImages = currentProduct.images && currentProduct.images.length > 0 
+                    ? currentProduct.images 
+                    : [currentProduct.image_url];
+
+                // Display product info
+                document.getElementById('productName').textContent = currentProduct.name;
+                document.getElementById('productPrice').textContent = `Rs ${currentProduct.price}`;
+                document.getElementById('productCategory').textContent = currentProduct.category;
+                document.getElementById('productDescription').textContent = currentProduct.description;
+
+                // Stock status
+                const stockEl = document.getElementById('stockStatus');
+                if (currentProduct.stock > 0) {
+                    stockEl.textContent = `✓ In Stock (${currentProduct.stock} available)`;
+                    stockEl.className = 'stock-status in-stock';
                 } else {
-                    throw new Error('Product not found');
+                    stockEl.textContent = '✗ Out of Stock';
+                    stockEl.className = 'stock-status out-of-stock';
                 }
+
+                // Display images
+                displayImages();
+
             } catch (error) {
                 console.error('Error loading product:', error);
-                showNotification('Failed to load product details', 'error');
+                alert('Failed to load product details');
             }
         }
 
-        function displayProduct(product) {
-            // Set product info
-            document.getElementById('product-title').textContent = product.name;
-            document.getElementById('product-price').textContent = `Rs ${product.price.toFixed(2)}`;
-            document.getElementById('product-category').textContent = product.category;
-            document.getElementById('product-description').textContent = product.description || 'No description available.';
-            document.getElementById('stock-quantity').textContent = product.stock_quantity || 0;
-
-            // Update stock info styling
-            const stockInfo = document.getElementById('stock-info');
-            if (product.stock_quantity <= 0) {
-                stockInfo.classList.add('out-of-stock');
-                stockInfo.innerHTML = '<strong>Out of Stock</strong>';
-                document.getElementById('add-to-cart-btn').classList.add('btn-disabled');
-                document.getElementById('order-now-btn').classList.add('btn-disabled');
-                document.getElementById('add-to-cart-btn').disabled = true;
-                document.getElementById('order-now-btn').disabled = true;
-            }
-
-            // Display images
-            const images = product.image_url ? [product.image_url] : ['../images/placeholder-product.jpg'];
-            displayImages(images);
-
-            // Update page title
-            document.title = `${product.name} - BLOOME BY NAYAB`;
-        }
-
-        function displayImages(images) {
-            const mainImage = document.getElementById('main-image');
-            const thumbnailContainer = document.getElementById('thumbnail-images');
-
-            // Set main image
-            mainImage.innerHTML = `<img src="${images[currentImageIndex]}" alt="Product Image">`;
+        function displayImages() {
+            // Display main image
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = `${API_URL}${productImages[0]}`;
+            mainImage.onerror = () => mainImage.src = '../images/placeholder.png';
 
             // Display thumbnails if multiple images
-            if (images.length > 1) {
-                thumbnailContainer.innerHTML = images.map((img, index) => `
-                    <div class="thumbnail ${index === currentImageIndex ? 'active' : ''}" onclick="changeImage(${index})">
-                        <img src="${img}" alt="Thumbnail ${index + 1}">
+            if (productImages.length > 1) {
+                const gallery = document.getElementById('thumbnailGallery');
+                gallery.innerHTML = productImages.map((img, index) => `
+                    <div class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage(${index})">
+                        <img src="${API_URL}${img}" alt="Image ${index + 1}" onerror="this.src='../images/placeholder.png'">
                     </div>
                 `).join('');
-            } else {
-                thumbnailContainer.style.display = 'none';
             }
         }
 
         function changeImage(index) {
             currentImageIndex = index;
-            if (currentProduct) {
-                const images = currentProduct.image_url ? [currentProduct.image_url] : ['../images/placeholder-product.jpg'];
-                displayImages(images);
-            }
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = `${API_URL}${productImages[index]}`;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
         }
 
         function increaseQuantity() {
-            if (currentProduct && currentQuantity < currentProduct.stock_quantity) {
-                currentQuantity++;
-                document.getElementById('quantity').textContent = currentQuantity;
-            } else if (currentProduct) {
-                showNotification('Maximum available quantity reached', 'error');
+            const input = document.getElementById('quantity');
+            const max = currentProduct.stock;
+            if (parseInt(input.value) < max) {
+                input.value = parseInt(input.value) + 1;
             }
         }
 
         function decreaseQuantity() {
-            if (currentQuantity > 1) {
-                currentQuantity--;
-                document.getElementById('quantity').textContent = currentQuantity;
+            const input = document.getElementById('quantity');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
             }
         }
 
         function addToCart() {
-            if (!currentProduct || currentProduct.stock_quantity <= 0) {
-                showNotification('Product is out of stock', 'error');
+            if (currentProduct.stock === 0) {
+                alert('Sorry, this product is out of stock');
                 return;
             }
 
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            // Get existing cart
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            // Check if product already in cart
             const existingItem = cart.find(item => item.id === currentProduct.id);
-
+            
             if (existingItem) {
-                existingItem.quantity += currentQuantity;
+                existingItem.quantity += quantity;
             } else {
                 cart.push({
                     id: currentProduct.id,
                     name: currentProduct.name,
                     price: currentProduct.price,
-                    image: currentProduct.image_url,
-                    quantity: currentQuantity
+                    image_url: currentProduct.image_url,
+                    quantity: quantity
                 });
             }
-
+            
             localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-            showNotification(`${currentProduct.name} added to cart!`, 'success');
+            alert('Product added to cart!');
         }
 
         function orderNow() {
-            if (!currentProduct || currentProduct.stock_quantity <= 0) {
-                showNotification('Product is out of stock', 'error');
+            if (currentProduct.stock === 0) {
+                alert('Sorry, this product is out of stock');
                 return;
             }
 
-            // Add to cart first
-            const cart = [{
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            // Create a temporary cart with just this product
+            const orderCart = [{
                 id: currentProduct.id,
                 name: currentProduct.name,
                 price: currentProduct.price,
-                image: currentProduct.image_url,
-                quantity: currentQuantity
+                image_url: currentProduct.image_url,
+                quantity: quantity
             }];
-
-            localStorage.setItem('cart', JSON.stringify(cart));
             
-            // Redirect to checkout
+            localStorage.setItem('cart', JSON.stringify(orderCart));
             window.location.href = 'checkout.html';
         }
 
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const count = cart.reduce((total, item) => total + item.quantity, 0);
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = count;
-            }
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProductDetails();
-            updateCartCount();
-        });
-
-       
+        // Load product on page load
+        loadProduct();
     </script>
 </body>
 </html>
