@@ -6,7 +6,6 @@
     <title>Admin Panel - BLOOME BY NAYAB</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-        /* Admin styles */
         .admin-container {
             max-width: 1200px;
             margin: 40px auto;
@@ -26,6 +25,37 @@
             color: #333;
             border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .admin-tabs button {
+            padding: 12px 24px;
+            border: none;
+            background: #f5f5f5;
+            color: #333;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .admin-tabs button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .form-group {
@@ -55,7 +85,6 @@
             resize: vertical;
         }
 
-        /* Multiple images upload */
         .image-upload-area {
             border: 2px dashed #ddd;
             border-radius: 8px;
@@ -99,13 +128,6 @@
             cursor: pointer;
             font-size: 16px;
             line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-remove-btn:hover {
-            background: #c82333;
         }
 
         .primary-badge {
@@ -139,16 +161,16 @@
             background: #5568d3;
         }
 
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
         .btn-danger {
             background: #dc3545;
             color: white;
         }
 
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        /* Products table with horizontal scroll */
         .table-container {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -191,6 +213,41 @@
             float: right;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
         @media (max-width: 768px) {
             .admin-container {
                 padding: 10px;
@@ -203,11 +260,18 @@
             .image-preview-container {
                 grid-template-columns: repeat(3, 1fr);
             }
+
+            .admin-tabs {
+                flex-direction: column;
+            }
+
+            .admin-tabs button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav>
         <div class="nav-container">
             <div class="nav-logo">
@@ -222,79 +286,154 @@
     <div class="admin-container">
         <h1>Admin Panel - BLOOME BY NAYAB</h1>
 
-        <!-- Add Product Section -->
-        <div class="admin-section">
-            <h2>Add New Product</h2>
-            <form id="addProductForm">
-                <div class="form-group">
-                    <label for="productName">Product Name *</label>
-                    <input type="text" id="productName" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="productPrice">Price (PKR) *</label>
-                    <input type="number" id="productPrice" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="productCategory">Category *</label>
-                    <select id="productCategory" required>
-                        <option value="">Select Category</option>
-                        <option value="jewellery">Jewellery</option>
-                        <option value="cosmetics">Cosmetics</option>
-                        <option value="skincare">Skincare</option>
-                        <option value="clothes">Clothes</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="productDescription">Description *</label>
-                    <textarea id="productDescription" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="productStock">Stock Quantity *</label>
-                    <input type="number" id="productStock" min="0" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Product Images (Multiple) *</label>
-                    <div class="image-upload-area">
-                        <p>📸 Click to upload images or drag & drop</p>
-                        <p style="font-size: 12px; color: #666;">First image will be the main image</p>
-                        <input type="file" id="productImages" accept="image/*" multiple style="display: none;">
-                        <button type="button" class="btn btn-primary" onclick="document.getElementById('productImages').click()">
-                            Choose Images
-                        </button>
-                    </div>
-                    <div id="imagePreviewContainer" class="image-preview-container"></div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Add Product</button>
-            </form>
+        <div class="admin-tabs">
+            <button class="active" onclick="showTab('products')">Products</button>
+            <button onclick="showTab('orders')">Orders</button>
+            <button onclick="showTab('categories')">Manage Categories</button>
         </div>
 
-        <!-- Manage Products Section -->
-        <div class="admin-section">
-            <h2>Manage Products</h2>
-            <div class="table-container">
-                <table id="productsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody">
-                        <!-- Products will be loaded here -->
-                    </tbody>
-                </table>
+        <!-- PRODUCTS TAB -->
+        <div id="products-tab" class="tab-content active">
+            <div class="admin-section">
+                <h2>Add New Product</h2>
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="productName">Product Name *</label>
+                        <input type="text" id="productName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Price (PKR) *</label>
+                        <input type="number" id="productPrice" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Category *</label>
+                        <select id="productCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="jewellery">Jewellery</option>
+                            <option value="cosmetics">Cosmetics</option>
+                            <option value="skincare">Skincare</option>
+                            <option value="clothes">Clothes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productDescription">Description *</label>
+                        <textarea id="productDescription" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity *</label>
+                        <input type="number" id="productStock" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Images (Multiple) *</label>
+                        <div class="image-upload-area">
+                            <p>📸 Click to upload images or drag & drop</p>
+                            <p style="font-size: 12px; color: #666;">First image will be the main image</p>
+                            <input type="file" id="productImages" accept="image/*" multiple style="display: none;">
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('productImages').click()">
+                                Choose Images
+                            </button>
+                        </div>
+                        <div id="imagePreviewContainer" class="image-preview-container"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </form>
             </div>
+
+            <div class="admin-section">
+                <h2>Manage Products</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORDERS TAB -->
+        <div id="orders-tab" class="tab-content">
+            <div class="admin-section">
+                <h2>Manage Orders</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CATEGORIES TAB -->
+        <div id="categories-tab" class="tab-content">
+            <div class="admin-section">
+                <h2>Manage Category Logos</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="category-card">
+                        <h3>💍 Jewellery</h3>
+                        <input type="file" id="logo-jewellery" accept="image/*" style="margin: 10px 0;">
+                        <button class="btn btn-primary" onclick="uploadCategoryLogo('jewellery')">Upload Logo</button>
+                        <div id="preview-jewellery" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="category-card">
+                        <h3>💄 Cosmetics</h3>
+                        <input type="file" id="logo-cosmetics" accept="image/*" style="margin: 10px 0;">
+                        <button class="btn btn-primary" onclick="uploadCategoryLogo('cosmetics')">Upload Logo</button>
+                        <div id="preview-cosmetics" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="category-card">
+                        <h3>✨ Skincare</h3>
+                        <input type="file" id="logo-skincare" accept="image/*" style="margin: 10px 0;">
+                        <button class="btn btn-primary" onclick="uploadCategoryLogo('skincare')">Upload Logo</button>
+                        <div id="preview-skincare" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <div class="category-card">
+                        <h3>👗 Clothes</h3>
+                        <input type="file" id="logo-clothes" accept="image/*" style="margin: 10px 0;">
+                        <button class="btn btn-primary" onclick="uploadCategoryLogo('clothes')">Upload Logo</button>
+                        <div id="preview-clothes" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeOrderModal()">&times;</span>
+            <h2>Order Details</h2>
+            <div id="orderDetails"></div>
         </div>
     </div>
 
@@ -302,46 +441,32 @@
         const API_URL = 'https://nayab-webstore-production.up.railway.app/api';
         let selectedImages = [];
 
-        // Check if logged in and verify token
         const token = localStorage.getItem('adminToken');
         if (!token) {
-            console.log('No token found, redirecting to login');
             window.location.href = 'admin-login.html';
-        } else {
-            // Verify token is valid by making a test API call
-            verifyToken();
         }
 
-        async function verifyToken() {
-            try {
-                const response = await fetch(`${API_URL}/products`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    console.log('Token verification failed, clearing token');
-                    localStorage.removeItem('adminToken');
-                    window.location.href = 'admin-login.html';
-                }
-            } catch (error) {
-                console.error('Token verification error:', error);
+        // Tab switching
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tabs button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'orders') {
+                loadOrders();
             }
         }
 
-        // Handle multiple image selection
+        // Image handling
         document.getElementById('productImages').addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
-            
             files.forEach(file => {
                 if (file && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        selectedImages.push({
-                            file: file,
-                            dataUrl: event.target.result
-                        });
+                        selectedImages.push({ file: file, dataUrl: event.target.result });
                         displayImagePreviews();
                     };
                     reader.readAsDataURL(file);
@@ -365,33 +490,23 @@
             displayImagePreviews();
         }
 
-        // Upload images to server
         async function uploadImages() {
             const uploadedUrls = [];
-            
             for (const img of selectedImages) {
                 const formData = new FormData();
                 formData.append('image', img.file);
                 formData.append('type', 'product');
 
-                try {
-                    const response = await fetch(`${API_URL}/uploads/product`, {
-                        method: 'POST',
-                        body: formData
-                    });
+                const response = await fetch(`${API_URL}/uploads/product`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        uploadedUrls.push(data.imageUrl);
-                    } else {
-                        throw new Error('Upload failed');
-                    }
-                } catch (error) {
-                    console.error('Upload error:', error);
-                    throw error;
+                if (response.ok) {
+                    const data = await response.json();
+                    uploadedUrls.push(data.imageUrl);
                 }
             }
-
             return uploadedUrls;
         }
 
@@ -405,18 +520,15 @@
             }
 
             try {
-                // Upload all images
                 const imageUrls = await uploadImages();
-
-                // Create product with multiple images
                 const productData = {
                     name: document.getElementById('productName').value,
                     price: parseFloat(document.getElementById('productPrice').value),
                     category: document.getElementById('productCategory').value,
                     description: document.getElementById('productDescription').value,
                     stock: parseInt(document.getElementById('productStock').value),
-                    image_url: imageUrls[0], // Main image
-                    images: imageUrls // All images stored as JSON array
+                    image_url: imageUrls[0],
+                    images: imageUrls
                 };
 
                 const response = await fetch(`${API_URL}/products`, {
@@ -434,12 +546,10 @@
                     selectedImages = [];
                     displayImagePreviews();
                     loadProducts();
-                } else {
-                    throw new Error('Failed to add product');
                 }
             } catch (error) {
-                console.error('Error adding product:', error);
-                alert('Failed to add product. Please try again.');
+                console.error('Error:', error);
+                alert('Failed to add product');
             }
         });
 
@@ -468,27 +578,145 @@
             }
         }
 
-        // Delete product
         async function deleteProduct(id) {
-            if (!confirm('Are you sure you want to delete this product?')) return;
+            if (!confirm('Delete this product?')) return;
 
             try {
                 const response = await fetch(`${API_URL}/products/${id}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
-                    alert('Product deleted successfully!');
+                    alert('Product deleted!');
                     loadProducts();
-                } else {
-                    throw new Error('Failed to delete product');
                 }
             } catch (error) {
-                console.error('Error deleting product:', error);
-                alert('Failed to delete product');
+                console.error('Error:', error);
+            }
+        }
+
+        // Load orders
+        async function loadOrders() {
+            try {
+                const response = await fetch(`${API_URL}/orders`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                const tbody = document.getElementById('ordersTableBody');
+                tbody.innerHTML = data.orders.map(order => `
+                    <tr>
+                        <td>#${order.id}</td>
+                        <td>${order.customer_name}</td>
+                        <td>${order.customer_email}</td>
+                        <td>Rs ${order.total_amount}</td>
+                        <td>${order.status || 'pending'}</td>
+                        <td>${new Date(order.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="viewOrderDetails(${order.id})">View</button>
+                            <button class="btn btn-success" onclick="confirmOrder(${order.id}, '${order.customer_email}', '${order.customer_name}')">Confirm</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        async function viewOrderDetails(orderId) {
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                const order = data.order;
+
+                document.getElementById('orderDetails').innerHTML = `
+                    <p><strong>Order ID:</strong> #${order.id}</p>
+                    <p><strong>Customer:</strong> ${order.customer_name}</p>
+                    <p><strong>Email:</strong> ${order.customer_email}</p>
+                    <p><strong>Phone:</strong> ${order.customer_phone}</p>
+                    <p><strong>Address:</strong> ${order.shipping_address}</p>
+                    <p><strong>Subtotal:</strong> Rs ${order.subtotal || 0}</p>
+                    <p><strong>Delivery:</strong> Rs ${order.delivery_charges || 0}</p>
+                    <p><strong>Total:</strong> Rs ${order.total_amount}</p>
+                    <h3>Items:</h3>
+                    <table style="width: 100%;">
+                        <tr><th>Product</th><th>Qty</th><th>Price</th></tr>
+                        ${order.order_items.map(item => `
+                            <tr><td>${item.name}</td><td>${item.quantity}</td><td>Rs ${item.price}</td></tr>
+                        `).join('')}
+                    </table>
+                `;
+                document.getElementById('orderModal').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        async function confirmOrder(orderId, email, name) {
+            try {
+                await fetch(`${API_URL}/orders/${orderId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: 'confirmed' })
+                });
+
+                const emailResponse = await fetch(`${API_URL}/orders/${orderId}/confirm-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ customerEmail: email, customerName: name })
+                });
+
+                const emailData = await emailResponse.json();
+                alert(`Order confirmed!\n\nTracking URL: ${emailData.trackingUrl}\n\nCheck Railway logs for email content.`);
+                loadOrders();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to confirm order');
+            }
+        }
+
+        async function uploadCategoryLogo(category) {
+            const fileInput = document.getElementById(`logo-${category}`);
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select an image first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('type', 'category');
+
+            try {
+                const response = await fetch(`${API_URL}/uploads/category`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem(`category_logo_${category}`, data.imageUrl);
+                    document.getElementById(`preview-${category}`).innerHTML = 
+                        `<img src="${API_URL}${data.imageUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">`;
+                    alert('Category logo uploaded successfully!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to upload logo');
             }
         }
 
@@ -497,7 +725,6 @@
             window.location.href = 'admin-login.html';
         }
 
-        // Load products on page load
         loadProducts();
     </script>
 </body>
