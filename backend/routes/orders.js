@@ -90,6 +90,42 @@ router.get('/', authenticateToken, authorizeAdmin, (req, res) => {
     });
 });
 
+// Customer order tracking (NO AUTHENTICATION REQUIRED)
+router.get('/track/:id', (req, res) => {
+    const orderId = req.params.id;
+    const customerEmail = req.query.email;
+
+    console.log('🔍 Tracking request - Order ID:', orderId, 'Email:', customerEmail);
+
+    if (!customerEmail) {
+        console.log('❌ Email missing');
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Get order and verify email matches
+    db.get('SELECT * FROM orders WHERE id = ? AND customer_email = ?', [orderId, customerEmail], (err, row) => {
+        if (err) {
+            console.error('❌ Database error:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        
+        if (!row) {
+            console.log('❌ Order not found or email mismatch');
+            return res.status(404).json({ error: 'Order not found or email does not match' });
+        }
+
+        console.log('✅ Order found:', row.id);
+
+        // Parse order items
+        const order = {
+            ...row,
+            order_items: JSON.parse(row.order_items || '[]')
+        };
+
+        res.json({ order });
+    });
+});
+
 // Get a specific order (admin only)
 router.get('/:id', authenticateToken, authorizeAdmin, (req, res) => {
     const id = req.params.id;
@@ -172,7 +208,7 @@ router.post('/:id/confirm-email', authenticateToken, authorizeAdmin, (req, res) 
         // Create order tracking URL
         const trackingUrl = `${process.env.APP_URL || 'https://nayab-webstore-production.up.railway.app'}/pages/track-order.html?id=${orderId}&email=${encodeURIComponent(customerEmail)}`;
 
-        // Email content (you'll need to set up email service like SendGrid, Mailgun, or NodeMailer)
+        // Email content with mobile-responsive table
         const emailContent = {
             to: customerEmail,
             subject: `Order Confirmed #${orderId} - BLOOME BY NAYAB`,
@@ -183,26 +219,29 @@ router.post('/:id/confirm-email', authenticateToken, authorizeAdmin, (req, res) 
                     <p>Thank you for your order! Your order #${orderId} has been confirmed and will be processed shortly.</p>
                     
                     <h3>Order Details:</h3>
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #f5f5f5;">
-                                <th style="padding: 10px; text-align: left;">Product</th>
-                                <th style="padding: 10px; text-align: center;">Qty</th>
-                                <th style="padding: 10px; text-align: right;">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${orderItems.map(item => `
-                                <tr>
-                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
-                                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #eee;">${item.quantity}</td>
-                                    <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee;">Rs ${(item.price * item.quantity).toFixed(2)}</td>
+                    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <table style="width: 100%; min-width: 400px; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5;">
+                                    <th style="padding: 10px; text-align: left; white-space: nowrap;">Product</th>
+                                    <th style="padding: 10px; text-align: center; white-space: nowrap;">Qty</th>
+                                    <th style="padding: 10px; text-align: right; white-space: nowrap;">Price</th>
                                 </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                ${orderItems.map(item => `
+                                    <tr>
+                                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
+                                        <td style="padding: 10px; text-align: center; border-bottom: 1px solid #eee;">${item.quantity}</td>
+                                        <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee; white-space: nowrap;">Rs ${(item.price * item.quantity).toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
                     
-                    <p style="margin-top: 20px;"><strong>Delivery Charges:</strong> Rs ${order.delivery_charges || 0}</p>
+                    <p style="margin-top: 20px;"><strong>Subtotal:</strong> Rs ${order.subtotal || 0}</p>
+                    <p><strong>Delivery Charges:</strong> Rs ${order.delivery_charges || 0}</p>
                     <h3 style="color: #28a745;">Total: Rs ${order.total_amount}</h3>
                     
                     <p><strong>Shipping Address:</strong><br>${order.shipping_address}</p>
