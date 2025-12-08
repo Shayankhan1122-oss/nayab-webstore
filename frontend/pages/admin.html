@@ -499,12 +499,18 @@
 
                 const response = await fetch(`${API_URL}/uploads/product`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: formData
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     uploadedUrls.push(data.imageUrl);
+                } else {
+                    console.error('Upload failed:', await response.text());
+                    throw new Error('Image upload failed');
                 }
             }
             return uploadedUrls;
@@ -704,6 +710,9 @@
             try {
                 const response = await fetch(`${API_URL}/uploads/category`, {
                     method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
                     body: formData
                 });
 
@@ -713,6 +722,10 @@
                     document.getElementById(`preview-${category}`).innerHTML = 
                         `<img src="${API_URL}${data.imageUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">`;
                     alert('Category logo uploaded successfully!');
+                } else {
+                    const errorText = await response.text();
+                    console.error('Upload error:', errorText);
+                    alert('Failed to upload logo: ' + errorText);
                 }
             } catch (error) {
                 console.error('Error:', error);
