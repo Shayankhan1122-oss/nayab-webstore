@@ -115,34 +115,38 @@ router.post('/', authenticateToken, authorizeAdmin, (req, res) => {
 
 // Update a product (admin only)
 router.put('/:id', authenticateToken, authorizeAdmin, (req, res) => {
+    console.log('📝 Update product request for ID:', req.params.id);
+    console.log('Request body:', req.body);
+    
     const id = req.params.id;
     const { name, price, category, description, stock, image_url, images } = req.body;
 
     if (!name || !price || !category || !description || stock === undefined) {
+        console.log('❌ Missing required fields for update');
         return res.status(400).json({ error: 'All product details are required' });
     }
 
-    // Convert images array to JSON string
-    const imagesJson = images ? JSON.stringify(images) : null;
-
-    let query, params;
+    // If no image_url provided, keep the existing one
+    const query = image_url 
+        ? 'UPDATE products SET name = ?, price = ?, category = ?, description = ?, stock = ?, image_url = ? WHERE id = ?'
+        : 'UPDATE products SET name = ?, price = ?, category = ?, description = ?, stock = ? WHERE id = ?';
     
-    if (imagesJson) {
-        query = 'UPDATE products SET name = ?, price = ?, category = ?, description = ?, stock = ?, image_url = ?, images = ? WHERE id = ?';
-        params = [name, price, category, description, stock, image_url, imagesJson, id];
-    } else {
-        query = 'UPDATE products SET name = ?, price = ?, category = ?, description = ?, stock = ?, image_url = ? WHERE id = ?';
-        params = [name, price, category, description, stock, image_url, id];
-    }
+    const params = image_url
+        ? [name, price, category, description, stock, image_url, id]
+        : [name, price, category, description, stock, id];
+
+    console.log('Executing update query with params:', params);
 
     db.run(query, params, function(err) {
         if (err) {
-            res.status(500).json({ error: err.message });
-            return;
+            console.error('❌ Update error:', err.message);
+            return res.status(500).json({ error: err.message });
         }
         if (this.changes === 0) {
+            console.log('❌ Product not found');
             return res.status(404).json({ error: 'Product not found' });
         }
+        console.log('✅ Product updated successfully');
         res.json({ message: 'Product updated successfully' });
     });
 });
@@ -163,4 +167,4 @@ router.delete('/:id', authenticateToken, authorizeAdmin, (req, res) => {
     });
 });
 
-module.exports = router;;
+module.exports = router;

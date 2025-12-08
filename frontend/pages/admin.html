@@ -437,6 +437,49 @@
         </div>
     </div>
 
+    <!-- Edit Product Modal -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="editProductForm">
+                <input type="hidden" id="editProductId">
+                
+                <div class="form-group">
+                    <label for="editProductName">Product Name *</label>
+                    <input type="text" id="editProductName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductPrice">Price (PKR) *</label>
+                    <input type="number" id="editProductPrice" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductCategory">Category *</label>
+                    <select id="editProductCategory" required>
+                        <option value="jewellery">Jewellery</option>
+                        <option value="cosmetics">Cosmetics</option>
+                        <option value="skincare">Skincare</option>
+                        <option value="clothes">Clothes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductDescription">Description *</label>
+                    <textarea id="editProductDescription" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductStock">Stock Quantity *</label>
+                    <input type="number" id="editProductStock" min="0" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Product</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const API_URL = 'https://nayab-webstore-production.up.railway.app/api';
         let selectedImages = [];
@@ -526,7 +569,10 @@
             }
 
             try {
+                console.log('Uploading images...');
                 const imageUrls = await uploadImages();
+                console.log('Images uploaded:', imageUrls);
+
                 const productData = {
                     name: document.getElementById('productName').value,
                     price: parseFloat(document.getElementById('productPrice').value),
@@ -537,6 +583,8 @@
                     images: imageUrls
                 };
 
+                console.log('Sending product data:', productData);
+
                 const response = await fetch(`${API_URL}/products`, {
                     method: 'POST',
                     headers: {
@@ -546,16 +594,22 @@
                     body: JSON.stringify(productData)
                 });
 
+                console.log('Response status:', response.status);
+                const responseData = await response.json();
+                console.log('Response data:', responseData);
+
                 if (response.ok) {
                     alert('Product added successfully!');
                     document.getElementById('addProductForm').reset();
                     selectedImages = [];
                     displayImagePreviews();
                     loadProducts();
+                } else {
+                    alert('Failed to add product: ' + (responseData.error || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to add product');
+                alert('Failed to add product: ' + error.message);
             }
         });
 
@@ -575,6 +629,7 @@
                         <td>Rs ${product.price}</td>
                         <td>${product.stock}</td>
                         <td>
+                            <button class="btn btn-primary" style="margin-right: 5px;" onclick="editProduct(${product.id})">Edit</button>
                             <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
                         </td>
                     </tr>
@@ -601,6 +656,67 @@
                 console.error('Error:', error);
             }
         }
+
+        // Edit product
+        async function editProduct(id) {
+            try {
+                const response = await fetch(`${API_URL}/products/${id}`);
+                const data = await response.json();
+                const product = data.product;
+
+                document.getElementById('editProductId').value = product.id;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductCategory').value = product.category;
+                document.getElementById('editProductDescription').value = product.description;
+                document.getElementById('editProductStock').value = product.stock;
+
+                document.getElementById('editProductModal').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to load product details');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editProductModal').style.display = 'none';
+        }
+
+        document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('editProductId').value;
+            const productData = {
+                name: document.getElementById('editProductName').value,
+                price: parseFloat(document.getElementById('editProductPrice').value),
+                category: document.getElementById('editProductCategory').value,
+                description: document.getElementById('editProductDescription').value,
+                stock: parseInt(document.getElementById('editProductStock').value)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/products/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    alert('Product updated successfully!');
+                    closeEditModal();
+                    loadProducts();
+                } else {
+                    const data = await response.json();
+                    alert('Failed to update: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update product');
+            }
+        });
 
         // Load orders
         async function loadOrders() {
