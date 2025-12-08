@@ -85,6 +85,15 @@ db.run('ALTER TABLE products ADD COLUMN images TEXT', (err) => {
     }
 });
 
+// 6. Add stock column to products if missing
+db.run('ALTER TABLE products ADD COLUMN stock INTEGER DEFAULT 0', (err) => {
+    if (err && !err.message.includes('duplicate column')) {
+        console.warn('⚠️ Stock column warning:', err.message);
+    } else {
+        console.log('✅ Stock column ready');
+    }
+});
+
 console.log('✅ All migrations complete!');
 
 const app = express();
