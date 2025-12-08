@@ -63,29 +63,41 @@ router.get('/:id', (req, res) => {
 
 // Add a new product (admin only)
 router.post('/', authenticateToken, authorizeAdmin, (req, res) => {
+    console.log('📦 Add product request received');
+    console.log('Request body:', req.body);
+    
     const { name, price, category, description, stock, image_url, images } = req.body;
 
     if (!name || !price || !category || !description || stock === undefined || !image_url) {
+        console.log('❌ Missing required fields');
         return res.status(400).json({ error: 'All product details are required' });
     }
 
     // Convert images array to JSON string
     const imagesJson = images ? JSON.stringify(images) : JSON.stringify([image_url]);
+    console.log('Images JSON:', imagesJson);
 
     const query = 'INSERT INTO products (name, price, category, description, stock, image_url, images) VALUES (?, ?, ?, ?, ?, ?, ?)';
     const params = [name, price, category, description, stock, image_url, imagesJson];
 
+    console.log('Executing query with params:', params);
+
     db.run(query, params, function(err) {
         if (err) {
+            console.error('❌ Database error:', err.message);
+            
             // If images column doesn't exist, try without it
             if (err.message.includes('no column named images')) {
+                console.log('⚠️ Images column not found, trying fallback...');
                 const fallbackQuery = 'INSERT INTO products (name, price, category, description, stock, image_url) VALUES (?, ?, ?, ?, ?, ?)';
                 const fallbackParams = [name, price, category, description, stock, image_url];
                 
                 db.run(fallbackQuery, fallbackParams, function(fallbackErr) {
                     if (fallbackErr) {
+                        console.error('❌ Fallback query failed:', fallbackErr.message);
                         return res.status(500).json({ error: fallbackErr.message });
                     }
+                    console.log('✅ Product added with fallback (ID:', this.lastID, ')');
                     res.status(201).json({ 
                         id: this.lastID, 
                         message: 'Product added successfully (without multiple images support)' 
@@ -94,9 +106,9 @@ router.post('/', authenticateToken, authorizeAdmin, (req, res) => {
                 return;
             }
             
-            res.status(500).json({ error: err.message });
-            return;
+            return res.status(500).json({ error: err.message });
         }
+        console.log('✅ Product added successfully (ID:', this.lastID, ')');
         res.status(201).json({ id: this.lastID, message: 'Product added successfully' });
     });
 });
@@ -151,4 +163,4 @@ router.delete('/:id', authenticateToken, authorizeAdmin, (req, res) => {
     });
 });
 
-module.exports = router;
+module.exports = router;;
