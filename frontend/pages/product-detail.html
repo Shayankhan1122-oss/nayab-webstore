@@ -364,7 +364,7 @@
         function displayImages() {
             // Display main image
             const mainImage = document.getElementById('mainImage');
-            mainImage.src = `${API_URL}${productImages[0]}`;
+            mainImage.src = productImages[0];
             mainImage.onerror = () => mainImage.src = '../images/placeholder.png';
 
             // Display thumbnails if multiple images
@@ -372,7 +372,7 @@
                 const gallery = document.getElementById('thumbnailGallery');
                 gallery.innerHTML = productImages.map((img, index) => `
                     <div class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeImage(${index})">
-                        <img src="${API_URL}${img}" alt="Image ${index + 1}" onerror="this.src='../images/placeholder.png'">
+                        <img src="${img}" alt="Image ${index + 1}" onerror="this.src='../images/placeholder.png'">
                     </div>
                 `).join('');
             }
@@ -381,7 +381,7 @@
         function changeImage(index) {
             currentImageIndex = index;
             const mainImage = document.getElementById('mainImage');
-            mainImage.src = `${API_URL}${productImages[index]}`;
+            mainImage.src = productImages[index];
             
             // Update active thumbnail
             document.querySelectorAll('.thumbnail').forEach((thumb, i) => {

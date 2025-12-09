@@ -623,7 +623,7 @@
                 tbody.innerHTML = data.products.map(product => `
                     <tr>
                         <td>${product.id}</td>
-                        <td><img src="${API_URL}${product.image_url}" alt="${product.name}"></td>
+                        <td><img src="${product.image_url}" alt="${product.name}"></td>
                         <td>${product.name}</td>
                         <td>${product.category}</td>
                         <td>Rs ${product.price}</td>
@@ -836,7 +836,7 @@
                     const data = await response.json();
                     localStorage.setItem(`category_logo_${category}`, data.imageUrl);
                     document.getElementById(`preview-${category}`).innerHTML = 
-                        `<img src="${API_URL}${data.imageUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">`;
+                        `<img src="${data.imageUrl}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">`;
                     alert('Category logo uploaded successfully!');
                 } else {
                     const errorText = await response.text();
